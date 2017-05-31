@@ -1,0 +1,10 @@
+.alert-info {
+    background-color: darkorange;
+    color: white;
+}
+
+.alert-info .reference {
+    color: white;
+    text-decoration: underline;
+    font-weight: bold;
+}
