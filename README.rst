@@ -1,13 +1,31 @@
 msgen
-========
-Microsoft Genomics Command-line Client
+=====
+msgen is a command-line client for the Microsoft Genomics service which is currently available via a private preview program.
+
+Release notes
+-------------
+
+1. Submitting multiple FASTQ or multiple BAM files.
+2. Filtering options for the ``list`` command.
+3. Range limiting options for the ``list`` command.
+4. Export to CSV of the ``list`` command output.
+5. Bug fixes!
+
+This version of msgen also introduces user interface changes. If you would like to keep using an older version, you can downgrade back
+to 0.6.15 by running the following command:
+
+::
+
+  pip install msgen==0.6.15
+
+Otherwise, you may want to scroll down to :ref:`breaking-changes`.
 
 Installation
 ------------
-`msgen`_ is on PyPI and can be installed via:
+msgen is compatible with Python 2.7. We recommend using version 2.7.12 or later. msgen can be installed from PyPI.
 
 Linux
-
+~~~~~
 ::
 
   sudo apt-get install -y build-essential libssl-dev libffi-dev libpython-dev python-dev python-pip
@@ -15,130 +33,137 @@ Linux
   sudo pip install msgen
 
 Windows
-
+~~~~~~~
 ::
 
   pip install --upgrade --no-deps msgen
   pip install msgen
 
 
-msgen is compatible with Python 2.7. If you do not want to install msgen
-as a system-wide binary and modify system-wide python packages, use the
+If you do not want to install msgen as a system-wide binary and modify system-wide python packages, use the
 ``--user`` flag with ``pip``.
 
-- Base Requirements
-
-  - `azure-storage`_
-  - `requests`_
-
+Basic requirements
+~~~~~~~~~~~~~~~~~~~
+* `azure-storage`_
+* `requests`_
 
 You can install these packages using pip, easy_install or through standard
 setup.py procedures. These dependencies will be automatically installed if
-using a package-based install or setup.py. The required versions of these
+using a package-based installation or setup.py. The required versions of these
 dependent packages can be found in ``setup.py``.
 
 .. _azure-storage: https://pypi.python.org/pypi/azure-storage
 .. _requests: https://pypi.python.org/pypi/requests
 
 
-Release Notes
--------------
-
-1. Ability to specify SAS token duration for input blobs and an output container. The default token duration is 48 hours.
-2. Ability to provide a short description for submitted workflows.
-3. Minor fixes and improvements.
-
-Usage
--------------
-
+Basic usage
+-----------
 After installing msgen, a simple command to check connectivity is:
 
-::
+.. code-block:: bat
+   :caption: Windows console
 
-  msgen ^
-    -api_url_base     https://malibutest0044.azure-api.net ^
-    -subscription_key <MsGen_Subscription_Key>  ^
-    -command          LIST
+   msgen list ^
+     --api-url-base     https://malibutest0044.azure-api.net ^
+     --subscription-key <API subscription key>
 
-..
+.. code-block:: sh
+   :caption: Unix console
 
-  Note: the ``^`` at the end of the lines above is a continuation character for this document and is not part of the command. On Linux, the continuation character is ``\``.
+   msgen list \
+     --api-url-base     https://malibutest0044.azure-api.net \
+     --subscription-key <API subscription key>
 
-You can get a full list of available arguments by running ``msgen -h``, but generally you will need to provide
-at least ``-api_url_base``, ``-subscription_key``, and ``-command``, where the value of ``-command`` is one of the following:
+You can get a full list of available commands and arguments by running ``msgen help``, but generally you will
+need to provide at least a command, ``--api-url-base``, and ``--subscription-key``, where the command is one
+of the following:
 
-=========  =====
-LIST       Returns a list of jobs you have submitted. Takes no arguments.
-SUBMIT     Submits a workflow request to the service. Needs at least ``-process_name`` and storage-related arguments. ``-process_name`` identifies the specific processing workflow and version to run.  Use ``snapgatk`` to run the latest process. To lock on a specific processing package you can use the explicit name, e.g. ``snapgatk-20170124_4``.
-GETSTATUS  Returns the status of the workflow specified by ``-workflow_id``.
-CANCEL     Sends a request to cancel processing of the workflow specified by ``-workflow_id``.
-=========  =====
+==========  =====
+``list``    Returns a list of jobs you have submitted. For arguments, see ``msgen help list``.
+``submit``  Submits a workflow request to the service. For arguments, see ``msgen help submit``.
+``status``  Returns the status of the workflow specified by ``--workflow-id``. See also ``msgen help status``.
+``cancel``  Sends a request to cancel processing of the workflow specified by ``--workflow-id``. See also ``msgen help cancel``.
+==========  =====
 
-So, here is what a command to submit two fastq.gz files for processing may look like:
+Breaking changes from 0.6.15
+----------------------------
+Specifying commands
+~~~~~~~~~~~~~~~~~~~
+Previously, the operation you wanted to invoke was a parameter to the ``-command`` option.  Now, the desired command directly follows
+the program name, ``msgen``. Below is a table comparing invocations of msgen 0.6.* and 0.7.0 for cases when a configuration file is
+not used.
 
-::
+.. cssclass:: table-bordered
 
-  msgen ^
-    -api_url_base     https://malibutest0044.azure-api.net ^
-    -subscription_key <MsGen_Subscription_Key> ^
-    -command          SUBMIT ^
-    -process_name     snapgatk ^
-    -process_args     R=grch37bwa ^
-    -description      <short_description>
-    -input_storage_account_type       AZURE_BLOCK_BLOB ^
-    -input_storage_account_name       <your_sa_name_in> ^
-    -input_storage_account_key        <your_sa_key_in> ^
-    -input_storage_account_container  <your_sa_container_name> ^
-    -input_blob_name_1                <your_blob_reads_1> ^
-    -input_blob_name_2                <your_blob_reads_2> ^
-    -output_storage_account_type      AZURE_BLOCK_BLOB ^
-    -output_storage_account_name      <your_sa_name_out> ^
-    -output_storage_account_key       <your_sa_key_in> ^
-    -output_storage_account_container <your_results_container> ^
-    -output_filename_base             <your_results_basename>
-    -sas_duration                     <sas_token_duration_in_hours>
++------------------------------+----------------------------+
+|msgen 0.6.* (without config)  |msgen 0.7.0 (without config)|
++==============================+============================+
+|``msgen -command submit …``   |``msgen submit …``          |
++------------------------------+----------------------------+
+|``msgen -command list …``     |``msgen list …``            |
++------------------------------+----------------------------+
+|``msgen -command getstatus …``|``msgen status …``          |
++------------------------------+----------------------------+
+|``msgen -command cancel …``   |``msgen cancel …``          |
++------------------------------+----------------------------+
 
-All of these arguments could be read from a configuration file which is included using the ``-f`` option:
+Commands cannot be specified in the configuration file anymore and will be ignored if mentioned there. Below is a table comparing
+invocations between msgen 0.6.* and 0.7.0 for cases when a configuration file is used.
 
-::
+.. cssclass:: table-bordered
 
-  msgen -f sample.001.txt
++--------------------------+------------------------------------+--------------------------------+
+|Command in the config file|msgen 0.6.* (with command in config)|msgen 0.7.0 (with config)       |
++==========================+====================================+================================+
+|*command: submit*         |``msgen -f config.txt …``           |``msgen submit -f config.txt …``|
++--------------------------+------------------------------------+--------------------------------+
+|*command: list*           |``msgen -f config.txt …``           |``msgen list -f config.txt …``  |
++--------------------------+------------------------------------+--------------------------------+
+|*command: getstatus*      |``msgen -f config.txt …``           |``msgen status -f config.txt …``|
++--------------------------+------------------------------------+--------------------------------+
+|*command: cancel*         |``msgen -f config.txt …``           |``msgen cancel -f config.txt …``|
++--------------------------+------------------------------------+--------------------------------+
 
-An example sample.001.txt configuration file that matches the above submit command would look like:
+Specifying other arguments
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+Using the command line
+^^^^^^^^^^^^^^^^^^^^^^
+If you provide at least some required information via the command line arguments when interacting with the Microsoft Genomics service,
+you will need to update your command invocation. All arguments are now provided either in the short format like ``-k`` or in the long
+format like ``--subscription-key``. Note that arguments in the long format start with a double dash and that underscores between words
+are replaced with dashes. Below is a table listing some of the submit arguments to illustrate this difference between msgen 0.6.* and
+0.7.0.
 
-::
+.. cssclass:: table-bordered
 
-  # Microsoft Genomics Service - Command Line Interface - Configuration File
-  # Instructions
-  # 1.  Entries are provided in key-value pairs, like key:value
-  # 2.  Whitespace (tabs, spaces) don't matter
-  # 3.  Lines starting with # are ignored
-  
-  api_url_base:    https://malibutest0044.azure-api.net
-  subscription_key: <MsGen_Subscription_Key>
-  command:          SUBMIT
-  process_name:     snapgatk
-  process_args:     R=grch37bwa
-  description:      <short_description>
-  sas_duration:     <sas_token_duration_in_hours>
++-------------------------------------+------------------------------------------+
+|msgen 0.6.*                          |msgen 0.7.0                               |
++=====================================+==========================================+
+|``-api_url_base``                    |``-u/--api-url-base``                     |
++-------------------------------------+------------------------------------------+
+|``-subscription_key``                |``-k/--subscription-key``                 |
++-------------------------------------+------------------------------------------+
+|``-input_storage_account_name``      |``-ia/--input-storage-account-name``      |
++-------------------------------------+------------------------------------------+
+|``-input_storage_account_key``       |``-ik/--input-storage-account-key``       |
++-------------------------------------+------------------------------------------+
+|``-input_storage_account_container`` |``-ic/--input-storage-account-container`` |
++-------------------------------------+------------------------------------------+
+|``-input_blob_name_1``               |``-b1/--input-blob-name-1``               |
++-------------------------------------+------------------------------------------+
+|``-input_blob_name_2``               |``-b2/--input-blob-name-1``               |
++-------------------------------------+------------------------------------------+
+|``-output_storage_account_name``     |``-oa/--output-storage-account-name``     |
++-------------------------------------+------------------------------------------+
+|``-output_storage_account_key``      |``-ok/--output-storage-account-key``      |
++-------------------------------------+------------------------------------------+
+|``-output_storage_account_container``|``-oc/--output-storage-account-container``|
++-------------------------------------+------------------------------------------+
+|``-process_args``                    |``-pa/--process-args``                    |
++-------------------------------------+------------------------------------------+
 
-  input_storage_account_type:       AZURE_BLOCK_BLOB
-  input_storage_account_name:       <your_sa_name_in>
-  input_storage_account_key:        <your_sa_key_in>
-  input_storage_account_container:  <your_sa_container_name>
-  input_blob_name_1:                <your_blob_reads_1>
-  input_blob_name_2:                <your_blob_reads_2>
-  
-  output_storage_account_type:      AZURE_BLOCK_BLOB
-  output_storage_account_name:      <your_sa_name_out>
-  output_storage_account_key:       <your_sa_key_in>
-  output_storage_account_container: <your_results_container>
-  output_filename_base:             <your_results_basename>
-  output_overwrite:                 False
-
-When using the ``-f`` option, you may have arguments in the file, on the command line, or in both places.
-Any arguments you have on the command line will override a value found in the configuration file.
-
-::
-
-  msgen -f sample.001.txt -output_overwrite true -sas_duration 48
+Using the configuration file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+There are no changes here, apart from the fact that the command is going to be ignored and will need to be provided on the command line.
+Your old configuration file can be re-used for all commands you want to use it with.
