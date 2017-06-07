@@ -18,7 +18,7 @@ to 0.6.15 by running the following command:
 
   pip install msgen==0.6.15
 
-Otherwise, you may want to scroll down to :ref:`breaking-changes`.
+Otherwise, you may want to scroll down to `breaking-changes`_.
 
 Installation
 ------------
@@ -94,8 +94,6 @@ Previously, the operation you wanted to invoke was a parameter to the ``-command
 the program name, ``msgen``. Below is a table comparing invocations of msgen 0.6.* and 0.7.0 for cases when a configuration file is
 not used.
 
-.. cssclass:: table-bordered
-
 +------------------------------+----------------------------+
 |msgen 0.6.* (without config)  |msgen 0.7.0 (without config)|
 +==============================+============================+
@@ -110,8 +108,6 @@ not used.
 
 Commands cannot be specified in the configuration file anymore and will be ignored if mentioned there. Below is a table comparing
 invocations between msgen 0.6.* and 0.7.0 for cases when a configuration file is used.
-
-.. cssclass:: table-bordered
 
 +--------------------------+------------------------------------+--------------------------------+
 |Command in the config file|msgen 0.6.* (with command in config)|msgen 0.7.0 (with config)       |
@@ -134,8 +130,6 @@ you will need to update your command invocation. All arguments are now provided 
 format like ``--subscription-key``. Note that arguments in the long format start with a double dash and that underscores between words
 are replaced with dashes. Below is a table listing some of the submit arguments to illustrate this difference between msgen 0.6.* and
 0.7.0.
-
-.. cssclass:: table-bordered
 
 +-------------------------------------+------------------------------------------+
 |msgen 0.6.*                          |msgen 0.7.0                               |
@@ -167,3 +161,5 @@ Using the configuration file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 There are no changes here, apart from the fact that the command is going to be ignored and will need to be provided on the command line.
 Your old configuration file can be re-used for all commands you want to use it with.
+
+.. _breaking-changes: #breaking-changes-from-0615
