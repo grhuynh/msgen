@@ -6,7 +6,7 @@
 # ----------------------------------------------------------
 
 """Data transfer functionality"""
-import msgen_cli.malibuazure as malibuazure
+import malibuazure
 
 class AzureDataTransfer(object):
 

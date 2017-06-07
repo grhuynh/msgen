@@ -99,8 +99,14 @@ Your old configuration file can be re-used for all commands you want to use it w
 
 New functionality
 -----------------
-This version of msgen includes new functionality for the list command. Previously, it was possible to only list all submitted workflows
-at once, and only plain text output was supported.
+This version of msgen allows multiple file submission and adds new functionality for the ``list`` command. Previously, it was possible to
+submit only a pair of FASTQ files or a single BAM file, and users had no options to control the output of the ``list`` command.
+
+Submitting multiple FASTQ or multiple BAM files
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+You can now submit multiple FASTQ files or multiple BAM files at once, if they come from the same sample. Note that you still cannot
+mix FASTQ and BAM files in the same submission, even if they originate from the same sample; you would have to bring them all to a single
+format. Instructions on how to submit multiple files are here: :ref:`submit-multiple`
 
 Filtering options
 ~~~~~~~~~~~~~~~~~

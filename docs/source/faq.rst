@@ -116,7 +116,156 @@ And you would submit it with this invocation: ``msgen submit -f config.txt``.
 
 How do I submit a BAM file for processing?
 ------------------------------------------
-The basics are the same as when submitting FASTQ files, but you will provide only one input file.
+The basics are the same as when submitting FASTQ files, but you will provide only one input file, as
+a value of the ``-b1/--input-blob-name-1`` argument.
+
+.. _submit-multiple:
+
+.. role:: orange
+
+.. role:: green
+
+.. role:: blue
+
+How do I submit *multiple* FASTQ and BAM files for processing?
+--------------------------------------------------------------
+Starting with the version 0.7.0, msgen lets you submit multiple FASTQ or BAM files coming from the same
+sample. Keep in mind, however, that you **cannot mix FASTQ and BAM files in the same submission**.
+
+FASTQ files
+===========
+
+Let’s say you have these six FASTQ files **all coming from the same sample** and uploaded to your storage
+account *myaccount* in Azure:
+
+* :orange:`ERR194158_1.fastq.gz`
+* :orange:`ERR194158_2.fastq.gz`
+* :green:`ERR194159_1.fastq.gz`
+* :green:`ERR194159_2.fastq.gz`
+* :blue:`ERR194160_1.fastq.gz`
+* :blue:`ERR194160_2.fastq.gz`
+
+Note that files highlighted with the same color form pairs; these are files with paired reads and
+should be processed together. Below are examples of how you would do that when submitting from a command line
+in Windows, in Unix, and using a configuration file. Note the order of file names when they are 
+passed to arguments ``-b1/--input-blob-name-1`` and ``-b2/--input-blob-name-2``. Line breaks are
+added for clarity.
+
+.. code-block:: bat
+   :caption: Windows console
+
+   msgen submit ^
+     --api-url-base https://malibutest0044.azure-api.net ^
+     --subscription-key <API subscription key> ^
+     --process-args R=grch37bwa ^
+     --input-storage-account-name myaccount ^
+     --input-storage-account-key <access key to "myaccount"> ^
+     --input-storage-account-container inputs ^
+     --input-blob-name-1 ERR194158_1.fastq.gz ERR194159_1.fastq.gz ERR194160_1.fastq.gz ^
+     --input-blob-name-2 ERR194158_2.fastq.gz ERR194159_2.fastq.gz ERR194160_2.fastq.gz ^
+     --output-storage-account-name myaccount ^
+     --output-storage-account-key <access key to "myaccount"> ^
+     --output-storage-account-container outputs
+
+.. code-block:: sh
+   :caption: Unix console
+
+   msgen submit \
+     --api-url-base https://malibutest0044.azure-api.net \
+     --subscription-key <API subscription key> \
+     --process-args R=grch37bwa \
+     --input-storage-account-name myaccount \
+     --input-storage-account-key <access key to "myaccount"> \
+     --input-storage-account-container inputs \
+     --input-blob-name-1 ERR194158_1.fastq.gz ERR194159_1.fastq.gz ERR194160_1.fastq.gz \
+     --input-blob-name-2 ERR194158_2.fastq.gz ERR194159_2.fastq.gz ERR194160_2.fastq.gz \
+     --output-storage-account-name myaccount \
+     --output-storage-account-key <access key to "myaccount"> \
+     --output-storage-account-container outputs
+
+.. code-block:: yaml
+   :caption: config.txt
+
+   api_url_base:                     https://malibutest0044.azure-api.net
+   subscription_key:                 <API subscription key>
+   process_args:                     R=grch37bwa
+   input_storage_account_name:       myaccount
+   input_storage_account_key:        <access key to "myaccount">
+   input_storage_account_container:  inputs
+   input_blob_name_1:                ERR194158_1.fastq.gz ERR194159_1.fastq.gz ERR194160_1.fastq.gz
+   input_blob_name_2:                ERR194158_2.fastq.gz ERR194159_2.fastq.gz ERR194160_2.fastq.gz
+   output_storage_account_name:      myaccount
+   output_storage_account_key:       <access key to "myaccount">
+   output_storage_account_container: outputs
+
+The above configuration file would be used with this invocation: ``msgen submit -f config.txt``.
+
+.. raw:: html
+
+    <script type="text/javascript">
+    $('div.highlight pre').html(
+    function(i,h){
+        return h.replace(/(ERR194158_[12]\.fastq\.gz)/g,'<span class="orange">$1</span>')
+                .replace(/(ERR194159_[12]\.fastq\.gz)/g,'<span class="green">$1</span>')
+                .replace(/(ERR194160_[12]\.fastq\.gz)/g,'<span class="blue">$1</span>');
+    });
+    </script>
+
+BAM files
+=========
+
+You can submit multiple BAM files by passing all their names to the ``-b1/--input-blob-name-1``
+argument. Note that all files should come from the same sample, but their order is not important.
+Below are example submissions from a command line in Windows, in Unix, and using a configuration file.
+
+.. code-block:: bat
+   :caption: Windows console
+   :emphasize-lines: 8
+
+   msgen submit ^
+     --api-url-base https://malibutest0044.azure-api.net ^
+     --subscription-key <API subscription key> ^
+     --process-args R=grch37bwa ^
+     --input-storage-account-name myaccount ^
+     --input-storage-account-key <access key to "myaccount"> ^
+     --input-storage-account-container inputs ^
+     --input-blob-name-1 ERR194158.bam ERR194159.bam ERR194160.bam ^
+     --output-storage-account-name myaccount ^
+     --output-storage-account-key <access key to "myaccount"> ^
+     --output-storage-account-container outputs
+
+.. code-block:: sh
+   :caption: Unix console
+   :emphasize-lines: 8
+
+   msgen submit \
+     --api-url-base https://malibutest0044.azure-api.net \
+     --subscription-key <API subscription key> \
+     --process-args R=grch37bwa \
+     --input-storage-account-name myaccount \
+     --input-storage-account-key <access key to "myaccount"> \
+     --input-storage-account-container inputs \
+     --input-blob-name-1 ERR194158.bam ERR194159.bam ERR194160.bam \
+     --output-storage-account-name myaccount \
+     --output-storage-account-key <access key to "myaccount"> \
+     --output-storage-account-container outputs
+
+.. code-block:: yaml
+   :caption: config.txt
+   :emphasize-lines: 7
+
+   api_url_base:                     https://malibutest0044.azure-api.net
+   subscription_key:                 <API subscription key>
+   process_args:                     R=grch37bwa
+   input_storage_account_name:       myaccount
+   input_storage_account_key:        <access key to "myaccount">
+   input_storage_account_container:  inputs
+   input_blob_name_1:                ERR194158.bam ERR194159.bam ERR194160.bam
+   output_storage_account_name:      myaccount
+   output_storage_account_key:       <access key to "myaccount">
+   output_storage_account_container: outputs
+
+The above configuration file would be used with this invocation: ``msgen submit -f config.txt``.
 
 What genome references can I use?
 ---------------------------------

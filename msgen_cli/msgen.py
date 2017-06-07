@@ -10,8 +10,8 @@
  of genomics workflows on the Microsoft Genomics platform"""
 
 import sys
-import msgen_cli.malibuworkflow as malibuworkflow
-import msgen_cli.malibuargs as malibuargs
+import malibuworkflow
+import malibuargs
 
 # Version must be valid form for StrictVersion <d>.<d>.<d> for the sort
 # to work properly and find the latest version.  More details at:

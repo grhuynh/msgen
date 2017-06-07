@@ -11,7 +11,7 @@ import itertools
 import os
 import re
 import sys
-from msgen_cli.malibucommon import ODataArguments, ORDER_ASC, ORDER_DESC
+from malibucommon import ODataArguments, ORDER_ASC, ORDER_DESC
 
 class MaxLengthValidator(argparse.Action):
     """String length validator"""

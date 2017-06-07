@@ -18,9 +18,9 @@ except ImportError:
     print "You need to install the 'requests' library. Try: pip install requests"
     sys.exit(code=1)
 
-import msgen_cli.malibucommon as malibucommon
-import msgen_cli.malibuservice as malibuservice
-import msgen_cli.datatransfer as datatransfer
+import malibucommon
+import malibuservice
+import datatransfer
 
 class WorkflowExecutor(object):
     """ Main class for working with workflows """

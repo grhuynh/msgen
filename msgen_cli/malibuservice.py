@@ -16,7 +16,7 @@ except ImportError:
             Try: pip install requests"""
     sys.exit(code=1)
 from requests.structures import CaseInsensitiveDict
-from msgen_cli.malibucommon import ORDER_ASC
+from malibucommon import ORDER_ASC
 
 def retry_policy(max_tries=45, start_delay=2, backoff_base=2, max_exp=5):
     """

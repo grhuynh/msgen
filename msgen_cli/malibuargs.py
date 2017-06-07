@@ -11,7 +11,7 @@ import re
 import sys
 from collections import namedtuple
 
-import msgen_cli.malibuargsactions as malibuargsactions
+import malibuargsactions
 
 PACKAGE_NAME = "msgen"
 PROGRAM_NAME = "msgen"
