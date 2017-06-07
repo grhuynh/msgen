@@ -1,6 +1,7 @@
 msgen
 =====
 msgen is a command-line client for the Microsoft Genomics service which is currently available via a private preview program.
+You can find more detailed documentation for it here: https://msgen.readthedocs.io/
 
 Release notes
 -------------

@@ -314,3 +314,9 @@ with underscores. Here are some conversion examples:
 +----------------------------------+---------------------------+
 |``-pa/--process-args R=grch37bwa``|*process_args: R=grch37bwa*|
 +----------------------------------+---------------------------+
+
+Can I contribute to msgen?
+--------------------------
+
+Yes, you can! Our code is hosted at https://github.com/MicrosoftGenomics/msgen. You may need to sign the CLA (Contributor License Agreement)
+if you want your code merged into the main repository.
