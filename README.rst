@@ -18,7 +18,7 @@ to 0.6.15 by running the following command:
 
   pip install msgen==0.6.15
 
-Otherwise, you may want to scroll down to `breaking-changes`_.
+Otherwise, you may want to scroll down to `Breaking changes`_.
 
 Installation
 ------------
@@ -162,4 +162,4 @@ Using the configuration file
 There are no changes here, apart from the fact that the command is going to be ignored and will need to be provided on the command line.
 Your old configuration file can be re-used for all commands you want to use it with.
 
-.. _breaking-changes: #breaking-changes-from-0615
+.. _Breaking changes: #breaking-changes-from-0615
