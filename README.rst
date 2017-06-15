@@ -63,15 +63,15 @@ Basic usage
 After installing msgen, a simple command to check connectivity is:
 
 .. code-block:: bat
-   :caption: Windows console
 
+   REM Windows console
    msgen list ^
      --api-url-base     https://malibutest0044.azure-api.net ^
      --subscription-key <API subscription key>
 
 .. code-block:: sh
-   :caption: Unix console
 
+   # Unix console
    msgen list \
      --api-url-base     https://malibutest0044.azure-api.net \
      --subscription-key <API subscription key>
