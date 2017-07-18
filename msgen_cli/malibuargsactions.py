@@ -170,37 +170,34 @@ def to_bool(value):
         return False
     raise argparse.ArgumentTypeError(error)
 
-BAD_INPUT_BLOB_CHARS = re.compile("[^A-Za-z0-9._/-]")
-BAD_OUTPUT_BASENAME_CHARS = re.compile("[^A-Za-z0-9._-]")
+BAD_BLOB_CHARS = re.compile("[^A-Za-z0-9._/-]")
 
-def _blob_name_validator(value, regex, isinput):
+def _blob_name_validator(value):
     """Blob name validator based on regular expression"""
     # Name length 1-1024 (https://docs.microsoft.com/en-us/azure/guidance/guidance-naming-conventions#naming-rules-and-restrictions)
-    # Characters: alphanumeric, dot, dash, and underscore
+    # Characters: alphanumeric, dot, dash, slash, and underscore
     value = value.strip()
     if not value:
         raise argparse.ArgumentTypeError("empty or whitespace-only names are not allowed; found [{}]".format(value))
     if len(value) > 1024:
         raise argparse.ArgumentTypeError("maximum length is 1024 characters; found a value of length {0}".format(len(value)))
-    if bool(regex.search(value)):
-        error = "each name should contain only alphanumeric characters, dot, dash, underscore"
-        if isinput:
-            error = error + ", slash"
+    if bool(BAD_BLOB_CHARS.search(value)):
+        error = "each name should contain only alphanumeric characters, dot, dash, underscore, and slash"
         raise argparse.ArgumentTypeError(error + "; found [{0}]".format(value))
     # We will not allow a leading slash in a blob name
     if value.startswith("/"):
-        raise argparse.ArgumentTypeError("input blob names cannot start with a slash; found [{0}]".format(value))
+        raise argparse.ArgumentTypeError("blob names cannot start with a slash; found [{0}]".format(value))
     return value
 
 def input_validator(value):
     """Input blob name validator"""
-    return _blob_name_validator(value, BAD_INPUT_BLOB_CHARS, isinput=True)
+    return _blob_name_validator(value)
 
 def output_validator(value):
     """Output blob name validator"""
     if not value or not value.strip():
         return None
-    return _blob_name_validator(value.strip(), BAD_OUTPUT_BASENAME_CHARS, isinput=False)
+    return _blob_name_validator(value.strip())
 
 BAM_SAM_FILE = re.compile(r"^.+\.(b|s)am$", re.IGNORECASE)
 FASTQ_FILE = re.compile(r"^.+\.f(ast)?q(\.gz)?$", re.IGNORECASE)

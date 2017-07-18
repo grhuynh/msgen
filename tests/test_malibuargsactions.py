@@ -100,8 +100,8 @@ class TestBlobNameValidator(unittest.TestCase):
     def test_accepts_with_standard_characters_for_output(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("--argument", type=malibuargsactions.output_validator)
-        result = parser.parse_args(["--argument", "1234AaZzYyXx.-_"])
-        self.assertEquals(result.argument, "1234AaZzYyXx.-_")
+        result = parser.parse_args(["--argument", "1234/AaZzYyXx.-_"])
+        self.assertEquals(result.argument, "1234/AaZzYyXx.-_")
 
     def test_accepts_with_standard_characters_for_input(self):
         parser = argparse.ArgumentParser()
@@ -112,6 +112,12 @@ class TestBlobNameValidator(unittest.TestCase):
     def test_throws_with_leading_slash_for_input(self):
         parser = argparse.ArgumentParser()
         parser.add_argument("--argument", type=malibuargsactions.input_validator)
+        with self.assertRaises(SystemExit):
+            result = parser.parse_args(["--argument", "/my/blob.b"])
+
+    def test_throws_with_leading_slash_for_input(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--argument", type=malibuargsactions.output_validator)
         with self.assertRaises(SystemExit):
             result = parser.parse_args(["--argument", "/my/blob.b"])
 
