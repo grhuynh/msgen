@@ -133,6 +133,7 @@ class WorkflowExecutor(object):
         input_dic, output_dic = self.get_input_and_output_dict()
 
         try:
+            optional_args = self.construct_optional_args()
             response_code, workflow = self.service.create_workflow_item(
                 self.args_output.process_name,
                 self.args_output.process_args,
@@ -141,6 +142,7 @@ class WorkflowExecutor(object):
                 input_dic,
                 output_dic,
                 self.args_output.description,
+                optional_args,
                 self.args_output.workflow_class)
 
             self.set_exit_code(None, response_code)
@@ -157,6 +159,13 @@ class WorkflowExecutor(object):
                    " and check your network settings.")
             print "Exception: {0}".format(str(exc))
             self.set_exit_code(2)
+
+    def construct_optional_args(self):
+        """ Create a dictionary of optional arguments that can modify process execution """
+        optional_args = {}
+        if self.args_output.bqsr_enabled is not None:
+            optional_args["BQSR"] = self.args_output.bqsr_enabled
+        return optional_args
 
     def poll_workflow_status_blocking(self, workflow_id=0, success_status=20000):
         """ Polls the status of submitted workflow """

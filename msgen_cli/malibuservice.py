@@ -117,6 +117,7 @@ class MalibuService(object):
                                        input_dictionary,
                                        output_dictionary,
                                        description,
+                                       optional_args,
                                        workflow_class):
 
         """ parses the HTTP request's body to create a workflow item """
@@ -127,15 +128,16 @@ class MalibuService(object):
                 "OutputStorageType": output_storage_account_type,
                 "InputArgs": input_dictionary,
                 "OutputArgs": output_dictionary,
+                "OptionalArgs": optional_args,
                 "WorkflowClass": workflow_class}
 
         return body
 
     @retry_policy()
-    def create_workflow_item(self, process_name,
-                             process_args, input_storage_account_type,
-                             output_storage_account_type, input_dictionary,
-                             output_dictionary, description, workflow_class):
+    def create_workflow_item(self, process_name, process_args,
+                             input_storage_account_type, output_storage_account_type,
+                             input_dictionary, output_dictionary,
+                             description, optional_args, workflow_class):
         """ submits POST HTTP request to create a workflow item """
         body = MalibuService.get_workflow_item_request_body(
             process_name,
@@ -145,6 +147,7 @@ class MalibuService(object):
             input_dictionary,
             output_dictionary,
             description,
+            optional_args,
             workflow_class)
         headers = MalibuService.get_headers(self.subscription_key)
 

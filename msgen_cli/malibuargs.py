@@ -81,8 +81,9 @@ class ArgsOutput(object):
 
         self.api_url_base = ""
         self.no_poll = False
-        self.debug_mode = False
         self.workflow_class = ""
+
+        self.bqsr_enabled = None
 
         self.input_dictionary = dict()
         self.output_dictionary = dict()
@@ -319,6 +320,11 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  required=False,
                                  type=malibuargsactions.to_bool,
                                  help="if 'false', will keep polling for the status after submission, otherwise, the client will return immediately; default value is 'false'")
+    submit_optional.add_argument("-bqsr", "--bqsr-enabled",
+                                 metavar="true|false",
+                                 required=False,
+                                 type=malibuargsactions.to_bool,
+                                 help="if 'false', will skip the BQSR step; default value is 'true'")
     submit_optional.add_argument("-wc", "--workflow-class",
                                  required=False,
                                  action=malibuargsactions.MaxLengthValidator, max_length=100,

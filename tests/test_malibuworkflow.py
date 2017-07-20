@@ -302,6 +302,28 @@ class TestMalibuWorkflow(unittest.TestCase):
         inputs, outputs = workflow.get_input_and_output_dict()
         self.assertEquals(inputs["BLOBNAMES"], "chr21-10k_1.fq.gz,chr21-10k_2.fq.gz,chr22-10k_1.fq.gz,chr22-10k_2.fq.gz,")
 
+    def test_construct_optional_args_returns_empty_dictionary_without_args(self):
+        args = testargs.get_test_args()
+        args.bqsr_enabled = None
+        workflow = malibuworkflow.WorkflowExecutor(args)
+        workflow.datatransfer = FakeDataTransfer(None)
+
+        optional_args = workflow.construct_optional_args()
+        self.assertDictEqual(optional_args, {})
+
+    def test_construct_optional_args_returns_nonempty_dictionary(self):
+        args = testargs.get_test_args()
+        args.bqsr_enabled = True
+        workflow = malibuworkflow.WorkflowExecutor(args)
+        workflow.datatransfer = FakeDataTransfer(None)
+
+        optional_args = workflow.construct_optional_args()
+        self.assertDictEqual(optional_args, {"BQSR": True})
+
+        args.bqsr_enabled = False
+        optional_args = workflow.construct_optional_args()
+        self.assertDictEqual(optional_args, {"BQSR": False})
+
 class FakeDataTransfer(datatransfer.AzureDataTransfer):
     def __init__(self, storage_account_info):
         self.input_container = "in"
