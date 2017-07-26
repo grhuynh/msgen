@@ -336,5 +336,36 @@ class TestNameDifference(unittest.TestCase):
         self.assertFalse(malibuargsactions.differ_in_at_most_one("ab", "ba"))
         self.assertFalse(malibuargsactions.differ_in_at_most_one("aba", "baa"))
 
+class TestReadGroupValidator(unittest.TestCase):
+    def test_accepts_empty_string(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--argument", type=malibuargsactions.read_group_validator)
+        result = parser.parse_args(["--argument", ""])
+        self.assertIsNone(result.argument)
+
+    def test_throws_on_max_length_exceeded(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--argument", type=malibuargsactions.read_group_validator)
+        with self.assertRaises(SystemExit):
+            result = parser.parse_args(["--argument", "@RG" * (malibuargsactions.MAX_READ_GROUP_LENGTH / 3 + 3)])
+
+    def test_throws_on_bad_prefix(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--argument", type=malibuargsactions.read_group_validator)
+        with self.assertRaises(SystemExit):
+            result = parser.parse_args(["--argument", "some string"])
+
+    def test_throws_on_illegal_characters(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--argument", type=malibuargsactions.read_group_validator)
+        with self.assertRaises(SystemExit):
+            result = parser.parse_args(["--argument", "@RG\tID:lalala;"])
+
+    def test_accepts_value_correctly(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--argument", type=malibuargsactions.read_group_validator)
+        result = parser.parse_args(["--argument", "@RG\tID:lal ala\tSM:my sample"])
+        self.assertEquals(result.argument, "@RG\\tID:lal ala\\tSM:my sample")
+
 if __name__ == '__main__':
     unittest.main()

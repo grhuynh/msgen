@@ -10,6 +10,7 @@ import argparse
 import itertools
 import os
 import re
+import string
 import sys
 from malibucommon import ODataArguments, ORDER_ASC, ORDER_DESC
 
@@ -198,6 +199,23 @@ def output_validator(value):
     if not value or not value.strip():
         return None
     return _blob_name_validator(value.strip())
+
+ALLOWED_READ_GROUP_CHARACTERS = set(string.letters + string.digits + string.punctuation + " \t") - set("=;")
+MAX_READ_GROUP_LENGTH = 1000
+
+def read_group_validator(value):
+    """Read group line validator"""
+    if not value or not value.strip():
+        return None
+    value = value.strip()
+    if len(value) > MAX_READ_GROUP_LENGTH:
+        raise argparse.ArgumentTypeError("read group line should not exceed 1000 characters; found {0}".format(len(value)))
+    if not value.startswith("@RG"):
+        raise argparse.ArgumentTypeError("read group line should start with @RG; found [{0}]".format(value))
+    illegal = filter(lambda c: c not in ALLOWED_READ_GROUP_CHARACTERS, value)
+    if len(illegal) > 0:
+        raise argparse.ArgumentTypeError("read group line may contain only ASCII letters and numbers, some punctuation, and spaces; found illegal characters [{0}]".format(illegal))
+    return value.replace("\t", "\\t")
 
 BAM_SAM_FILE = re.compile(r"^.+\.(b|s)am$", re.IGNORECASE)
 FASTQ_FILE = re.compile(r"^.+\.f(ast)?q(\.gz)?$", re.IGNORECASE)

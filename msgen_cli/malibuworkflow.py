@@ -165,6 +165,8 @@ class WorkflowExecutor(object):
         optional_args = {}
         if self.args_output.bqsr_enabled is not None:
             optional_args["BQSR"] = self.args_output.bqsr_enabled
+        if self.args_output.read_group is not None:
+            optional_args["ReadGroupLine"] = self.args_output.read_group
         return optional_args
 
     def poll_workflow_status_blocking(self, workflow_id=0, success_status=20000):

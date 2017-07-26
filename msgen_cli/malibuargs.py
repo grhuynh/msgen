@@ -84,6 +84,7 @@ class ArgsOutput(object):
         self.workflow_class = ""
 
         self.bqsr_enabled = None
+        self.read_group = None
 
         self.input_dictionary = dict()
         self.output_dictionary = dict()
@@ -325,6 +326,11 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  required=False,
                                  type=malibuargsactions.to_bool,
                                  help="if 'false', will skip the BQSR step; default value is 'true'")
+    submit_optional.add_argument("-rg", "--read-group",
+                                 metavar="READ GROUP LINE",
+                                 required=False,
+                                 type=malibuargsactions.read_group_validator,
+                                 help="an optional read group line that will override the default read group created by the process")
     submit_optional.add_argument("-wc", "--workflow-class",
                                  required=False,
                                  action=malibuargsactions.MaxLengthValidator, max_length=100,
