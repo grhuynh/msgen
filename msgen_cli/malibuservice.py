@@ -46,7 +46,8 @@ def retry_policy(max_tries=45, start_delay=2, backoff_base=2, max_exp=5):
                     else:
                         response_code = int(res[0])
                     #handling 403 specifically, APIM returns this code when the service is down
-                    if response_code < 500 and response_code != 403:
+                    #handling 429 specifically, APIM returns this code when throttling takes place
+                    if response_code < 500 and response_code != 403 and response_code != 429:
                         return res
                     print "Response: {0}".format(response_code)
                 except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as exc:
