@@ -143,7 +143,8 @@ class WorkflowExecutor(object):
                 output_dic,
                 self.args_output.description,
                 optional_args,
-                self.args_output.workflow_class)
+                self.args_output.workflow_class,
+                self.args_output.ignore_azure_region)
 
             self.set_exit_code(None, response_code)
             if not workflow.get("Message"):

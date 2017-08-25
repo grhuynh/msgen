@@ -85,6 +85,7 @@ class ArgsOutput(object):
 
         self.bqsr_enabled = None
         self.read_group = None
+        self.ignore_azure_region = None
 
         self.input_dictionary = dict()
         self.output_dictionary = dict()
@@ -336,6 +337,10 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  action=malibuargsactions.MaxLengthValidator, max_length=100,
                                  help=argparse.SUPPRESS)
     submit_optional.add_argument("-sf", "--suppress-fastq-validation",
+                                 required=False,
+                                 type=malibuargsactions.to_bool,
+                                 help=argparse.SUPPRESS)
+    submit_optional.add_argument("-ar", "--ignore-azure-region",
                                  required=False,
                                  type=malibuargsactions.to_bool,
                                  help=argparse.SUPPRESS)

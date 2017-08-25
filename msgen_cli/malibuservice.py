@@ -119,7 +119,8 @@ class MalibuService(object):
                                        output_dictionary,
                                        description,
                                        optional_args,
-                                       workflow_class):
+                                       workflow_class,
+                                       ignore_azure_region):
 
         """ parses the HTTP request's body to create a workflow item """
         body = {"Process": process_name,
@@ -130,7 +131,8 @@ class MalibuService(object):
                 "InputArgs": input_dictionary,
                 "OutputArgs": output_dictionary,
                 "OptionalArgs": optional_args,
-                "WorkflowClass": workflow_class}
+                "WorkflowClass": workflow_class,
+                "IgnoreAzureRegion": ignore_azure_region}
 
         return body
 
@@ -138,7 +140,7 @@ class MalibuService(object):
     def create_workflow_item(self, process_name, process_args,
                              input_storage_account_type, output_storage_account_type,
                              input_dictionary, output_dictionary,
-                             description, optional_args, workflow_class):
+                             description, optional_args, workflow_class, ignore_azure_region):
         """ submits POST HTTP request to create a workflow item """
         body = MalibuService.get_workflow_item_request_body(
             process_name,
@@ -149,7 +151,8 @@ class MalibuService(object):
             output_dictionary,
             description,
             optional_args,
-            workflow_class)
+            workflow_class,
+            ignore_azure_region)
         headers = MalibuService.get_headers(self.subscription_key)
 
         response = requests.post(self.api_url,
