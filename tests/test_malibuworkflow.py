@@ -238,6 +238,34 @@ class TestMalibuWorkflow(unittest.TestCase):
         expected["Created Date"] = "Wed, 08 Feb 2017 00:57:16 GMT"
         expected["End Date"] = "Wed, 08 Feb 2017 01:23:37 GMT"
         expected["Wall Clock Time"] = "0h 26m 21s"
+        expected["Bases Processed"] = ""
+        args = testargs.get_test_args()
+        workflow_executor = malibuworkflow.WorkflowExecutor(args)
+        transformed = workflow_executor.transform_workflow_for_output(workflow)
+        self.assertDictEqual(transformed, expected)
+
+    def test_transform_workflow_formats_gbases_correctly(self):
+        workflow = {
+            "Id": 3167,
+            "Status": 20000,
+            "CreatedDate": "2017-02-08T00:57:16.3403168+00:00",
+            "EndDate": "2017-02-08T01:23:37.0531197+00:00",
+            "FailureCode": 0,
+            "Message": None,
+            "Description": "process_args",
+            "Process": "snapgatk-20170207_1",
+            "BasesProcessed": "127434222576"
+        }
+        expected = OrderedDict()
+        expected["Workflow ID"] = "3167"
+        expected["Status"] = "Completed successfully"
+        expected["Message"] = ""
+        expected["Process"] = "snapgatk-20170207_1"
+        expected["Description"] = "process_args"
+        expected["Created Date"] = "Wed, 08 Feb 2017 00:57:16 GMT"
+        expected["End Date"] = "Wed, 08 Feb 2017 01:23:37 GMT"
+        expected["Wall Clock Time"] = "0h 26m 21s"
+        expected["Bases Processed"] = "127,434,222,576 (127 GBase)"
         args = testargs.get_test_args()
         workflow_executor = malibuworkflow.WorkflowExecutor(args)
         transformed = workflow_executor.transform_workflow_for_output(workflow)
