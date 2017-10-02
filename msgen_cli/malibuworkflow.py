@@ -293,11 +293,19 @@ class WorkflowExecutor(object):
         created_date = self.get_str_value(workflow, "CreatedDate")
         end_date = self.get_str_value(workflow, "EndDate")
         status = self.exit_status_by_workflow_status[workflow["Status"]][0]
-
+        
         created_date_object = datetime.strptime(created_date.split(".", 1)[0], "%Y-%m-%dT%H:%M:%S")
         end_date, hours, minutes, seconds = WorkflowExecutor.workflow_wall_clock_endtime(end_date, created_date_object)
         wall_time = "{0}h {1}m {2}s".format(hours, minutes, seconds)
         end_date_object = datetime.strptime(end_date.split(".", 1)[0], "%Y-%m-%dT%H:%M:%S") if end_date else None
+
+        raw_bases = self.get_str_value(workflow, "BasesProcessed")
+        if raw_bases:
+            number_bases = long(raw_bases)
+            gbases = number_bases // 1000000000
+            processed_bases = "{0:,d} ({1:,d} GBase)".format(number_bases, gbases)
+        else:
+            processed_bases = ""
 
         return OrderedDict([
             ("Workflow ID", workflow_id),
@@ -307,7 +315,8 @@ class WorkflowExecutor(object):
             ("Description", description),
             ("Created Date", malibucommon.format_rfc1123(created_date_object)),
             ("End Date", malibucommon.format_rfc1123(end_date_object)),
-            ("Wall Clock Time", wall_time)])
+            ("Wall Clock Time", wall_time),
+            ("Bases Processed", processed_bases)])
 
     def get_input_and_output_dict(self):
         """ gets the input dictionary with the service parameters """
