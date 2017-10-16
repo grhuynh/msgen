@@ -33,7 +33,7 @@ class WorkflowExecutor(object):
 
         self.service = malibuservice.MalibuService(
             malibu_url,
-            self.args_output.subscription_key)
+            self.args_output.access_key)
 
         storage_info = args_output.get_storage_accounts_info()
 
@@ -122,7 +122,7 @@ class WorkflowExecutor(object):
         """Posts a new workflow to the service"""
 
         workflow_id = self.post_workflow_blocking()
-        if self.args_output.no_poll or workflow_id <= 0:
+        if not self.args_output.poll or workflow_id <= 0:
             return
 
         self.poll_workflow_status_blocking(workflow_id)
@@ -217,6 +217,7 @@ class WorkflowExecutor(object):
         response_code = 0
         try:
             response_code, workflow = self.service.cancel_workflow_item(workflow_id)
+            cancellation_response_code = response_code
             self.set_exit_code(None, response_code)
             response_code, workflow = self.service.get_workflow_status(workflow_id)
             self.display_status(workflow, short=False)
@@ -227,7 +228,7 @@ class WorkflowExecutor(object):
             self.set_exit_code(1)
             return
 
-        if self.args_output.no_poll or workflow_id <= 0:
+        if not self.args_output.poll or workflow_id <= 0 or 400 <= cancellation_response_code < 500:
             return
 
         self.poll_workflow_status_blocking(0, 60000)

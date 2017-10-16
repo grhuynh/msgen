@@ -11,11 +11,11 @@ import msgen_cli.malibuargs as malibuargs
 
 class TestParse(unittest.TestCase):
     def test_parse_runs_successfully_with_full_command_line_options(self):
-        argv = "status -u https://url --subscription-key key -w 123".split()
+        argv = "status -u https://url --access-key key -w 123".split()
         args = malibuargs.parse(argv, None, None, None, None, None)
         self.assertEquals(args.command, "status")
         self.assertEquals(args.api_url_base, "https://url")
-        self.assertEquals(args.subscription_key, "key")
+        self.assertEquals(args.access_key, "key")
         self.assertEquals(args.workflow_id, "123")
 
     def test_parse_runs_successfully_with_options_from_config(self):
@@ -23,11 +23,11 @@ class TestParse(unittest.TestCase):
         args = malibuargs.parse(argv, None, None, None, None, None)
         self.assertEquals(args.command, "status")
         self.assertEquals(args.api_url_base, "https://malibudev0018.azure-api.net")
-        self.assertEquals(args.subscription_key, "key")
+        self.assertEquals(args.access_key, "key")
         self.assertEquals(args.workflow_id, "123")
 
     def test_parse_fails_without_required_options(self):
-        argv = "submit -u https://url --subscription-key key -b1 blob1".split()
+        argv = "submit -u https://url --access-key key -b1 blob1".split()
         with self.assertRaises(SystemExit):
             args = malibuargs.parse(argv, None, None, None, None, None)
 
@@ -83,23 +83,23 @@ class TestParse(unittest.TestCase):
         args = malibuargs.parse(argv, None, None, None, None, None)
         self.assertEquals(args.command, "list")
         self.assertEquals(args.api_url_base, "https://url")
-        self.assertEquals(args.subscription_key, "key")
+        self.assertEquals(args.access_key, "key")
 
     def test_parse_empty_bools_keeps_defaults(self):
         argv = "cancel -u https://url -k key -w 123".split()
-        args = malibuargs.parse(argv + ["-np", ""], None, None, None, None, None)
+        args = malibuargs.parse(argv + ["-pl", ""], None, None, None, None, None)
         args_output = malibuargs.ArgsOutput()
         args_output.fill(args)
         self.assertEquals(args_output.command, "CANCEL")
         self.assertEquals(args_output.api_url_base, "https://url")
-        self.assertEquals(args_output.subscription_key, "key")
+        self.assertEquals(args_output.access_key, "key")
         self.assertEquals(args_output.workflow_id, "123")
-        self.assertEquals(args_output.no_poll, False)
+        self.assertEquals(args_output.poll, False)
 
 def create_valid_args_output_for_submission():
     return ["submit",
             "--api-url-base", "http://url",
-            "--subscription-key", "key",
+            "--access-key", "key",
             "--input-storage-account-container", "icontainer",
             "--input-storage-account-key", "ikey",
             "--input-storage-account-name", "iaccount",

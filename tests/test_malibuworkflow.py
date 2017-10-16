@@ -90,7 +90,7 @@ class TestMalibuWorkflow(unittest.TestCase):
         """Submits a workflow item, assuming storage inputs
            no download"""
         args = testargs.get_test_args()
-        args.no_poll = True
+        args.poll = False
 
         workflow = malibuworkflow.WorkflowExecutor(args)
 

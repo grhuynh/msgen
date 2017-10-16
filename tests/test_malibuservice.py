@@ -76,7 +76,7 @@ class MalibuServiceTest(unittest.TestCase):
         args = testargs.get_test_args()
         url = malibucommon.get_api_url_from_base(args.api_url_base)
         self.service = malibuservice.MalibuService(
-            url, args.subscription_key)
+            url, args.access_key)
 
         #create an instace of the worflow to set the dictionaries
         workflow = malibuworkflow.WorkflowExecutor(args)

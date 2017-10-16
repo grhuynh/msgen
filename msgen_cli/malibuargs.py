@@ -24,8 +24,8 @@ See also https://pypi.python.org/pypi/msgen"""
     common_arguments = _common_help + """
 Here is an example of how you can do that:
 
-api_url_base    : https://<domain.name>
-subscription_key: <subscription key>
+api_url_base : https://<domain.name>
+access_key   : <access key>
 
 Note that values provided in the command line override values provided in the
 configuration file."""
@@ -56,7 +56,7 @@ class ArgsOutput(object):
 
         # This is where we keep all defaults. Let's not set them up in the parser so that we don't
         # have inconsistencies
-        self.subscription_key = ""
+        self.access_key = ""
         self.command = ""
         self.workflow_id = ""
         self.process_name = "snapgatk"
@@ -80,7 +80,7 @@ class ArgsOutput(object):
         self.sas_duration = 48
 
         self.api_url_base = ""
-        self.no_poll = False
+        self.poll = False
         self.workflow_class = ""
 
         self.bqsr_enabled = None
@@ -151,11 +151,11 @@ _usage = "\n    {0} help [{1}]\n".format(PROGRAM_NAME, "|".join(c for c in _acti
     "\n".join("    {0} {1} ...".format(PROGRAM_NAME, c) for c in _action_commands)
 
 _common_help = """All commands require two arguments to interact with the Microsoft Genomics
-service: -u/--api-url-base and -k/--subscription-key. The former is the base
-URI for the API, and the latter is one of your subscription keys which you can
-find on your Profile page of the Microsoft Genomics API portal. These values
-can also be part of the config file that you can provide using the
--f/--config-file option. """
+service: -u/--api-url-base and -k/--access-key. The former is the base URI for
+the API, and the latter is one of your access keys which you can find on the
+'Access keys' blade of you Genomics account in Azure portal. These values can
+also be part of the config file that you can provide using the -f/--config-file
+option. """
 
 def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
     """Returns a parser that reads arguments for all commands and calls
@@ -169,11 +169,11 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  required=True,
                                  type=malibuargsactions.nstr,
                                  help="Microsoft Genomics API URL")
-    common_required.add_argument("-k", "--subscription-key",
+    common_required.add_argument("-k", "--access-key",
                                  metavar="KEY",
                                  required=True,
                                  type=malibuargsactions.nstr,
-                                 help="your Microsoft Genomics subscription key")
+                                 help="your Microsoft Genomics access key")
     common_optional = common_parser.add_argument_group("common optional arguments")
     common_optional.add_argument("-f", "--config-file",
                                  metavar="CONFIG",
@@ -317,11 +317,11 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  required=False,
                                  action=malibuargsactions.PositiveIntValidator,
                                  help="access token duration for input blobs/output container, in hours")
-    submit_optional.add_argument("-np", "--no-poll",
+    submit_optional.add_argument("-pl", "--poll",
                                  metavar="true|false",
                                  required=False,
                                  type=malibuargsactions.to_bool,
-                                 help="if 'false', will keep polling for the status after submission, otherwise, the client will return immediately; default value is 'false'")
+                                 help="if 'false', the client will return immediately, otherwise, will keep polling for the status after submission; default value is 'false'")
     submit_optional.add_argument("-bqsr", "--bqsr-enabled",
                                  metavar="true|false",
                                  required=False,
@@ -356,11 +356,11 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  type=malibuargsactions.nstr,
                                  help="workflow ID returned after submission")
     cancel_optional = cancel_parser.add_argument_group("optional arguments for canceling a workflow")
-    cancel_optional.add_argument("-np", "--no-poll",
+    cancel_optional.add_argument("-pl", "--poll",
                                  metavar="true|false",
                                  required=False,
                                  type=malibuargsactions.to_bool,
-                                 help="if 'false', will keep polling for the status after cancellation, otherwise, the client will return immediately; default value is 'false'")
+                                 help="if 'false', the client will return immediately, otherwise, will keep polling for the status after cancellation; default value is 'false'")
     cancel_parser.set_defaults(run_command=cancel_func)
 
     # STATUS

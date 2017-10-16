@@ -66,18 +66,18 @@ After installing msgen, a simple command to check connectivity is:
 
    REM Windows console
    msgen list ^
-     --api-url-base     https://malibutest0044.azure-api.net ^
-     --subscription-key <API subscription key>
+     --api-url-base https://malibutest0044.azure-api.net ^
+     --access-key   <Genomics account access key>
 
 .. code-block:: sh
 
    # Unix console
    msgen list \
-     --api-url-base     https://malibutest0044.azure-api.net \
-     --subscription-key <API subscription key>
+     --api-url-base https://malibutest0044.azure-api.net \
+     --access-key   <Genomics account access key>
 
 You can get a full list of available commands and arguments by running ``msgen help``, but generally you will
-need to provide at least a command, ``--api-url-base``, and ``--subscription-key``, where the command is one
+need to provide at least a command, ``--api-url-base``, and ``--access-key``, where the command is one
 of the following:
 
 ==========  =====
@@ -128,7 +128,7 @@ Using the command line
 ^^^^^^^^^^^^^^^^^^^^^^
 If you provide at least some required information via the command line arguments when interacting with the Microsoft Genomics service,
 you will need to update your command invocation. All arguments are now provided either in the short format like ``-k`` or in the long
-format like ``--subscription-key``. Note that arguments in the long format start with a double dash and that underscores between words
+format like ``--access-key``. Note that arguments in the long format start with a double dash and that underscores between words
 are replaced with dashes. Below is a table listing some of the submit arguments to illustrate this difference between msgen 0.6.* and
 0.7.0.
 
@@ -137,7 +137,7 @@ are replaced with dashes. Below is a table listing some of the submit arguments 
 +=====================================+==========================================+
 |``-api_url_base``                    |``-u/--api-url-base``                     |
 +-------------------------------------+------------------------------------------+
-|``-subscription_key``                |``-k/--subscription-key``                 |
+|``-subscription_key``                |``-k/--access-key``                 |
 +-------------------------------------+------------------------------------------+
 |``-input_storage_account_name``      |``-ia/--input-storage-account-name``      |
 +-------------------------------------+------------------------------------------+

@@ -69,10 +69,10 @@ def retry_policy(max_tries=45, start_delay=2, backoff_base=2, max_exp=5):
 class MalibuService(object):
     """ Malibu Service API helper class """
 
-    def __init__(self, api_url, subscription_key):
+    def __init__(self, api_url, access_key):
         """ Constructor """
         self.api_url = api_url
-        self.subscription_key = subscription_key
+        self.access_key = access_key
 
     @classmethod
     def handle_response(cls, response_code, response_data):
@@ -98,11 +98,11 @@ class MalibuService(object):
         return workflow
 
     @classmethod
-    def get_headers(cls, subscription_key):
+    def get_headers(cls, access_key):
         """ Gets request headers """
         headers = {"content-type": "application/json",
                    "User-Agent": "Microsoft Genomics Command-line Client",
-                   "Ocp-Apim-Subscription-Key": subscription_key}
+                   "Ocp-Apim-Subscription-Key": access_key}
         return headers
 
     def get_workflow_url(self, workflow_id):
@@ -153,7 +153,7 @@ class MalibuService(object):
             optional_args,
             workflow_class,
             ignore_azure_region)
-        headers = MalibuService.get_headers(self.subscription_key)
+        headers = MalibuService.get_headers(self.access_key)
 
         response = requests.post(self.api_url,
                                  data=json.dumps(body),
@@ -167,7 +167,7 @@ class MalibuService(object):
     @retry_policy()
     def cancel_workflow_item(self, workflow_id):
         """ submits a DELETE HTTP request to cancel a workflow item """
-        headers = MalibuService.get_headers(self.subscription_key)
+        headers = MalibuService.get_headers(self.access_key)
         url = self.get_workflow_url(workflow_id)
         response = requests.delete(url,
                                    headers=headers)
@@ -199,7 +199,7 @@ class MalibuService(object):
             filters.append("Status eq '{0}'".format(50000 if outcome == "fail" else 20000))
         if filters:
             odata_args["$filter"] = " and ".join(filters)
-        headers = MalibuService.get_headers(self.subscription_key)
+        headers = MalibuService.get_headers(self.access_key)
         response = requests.get(self.api_url, headers=headers, params=odata_args)
         response_code = response.status_code
 
@@ -213,7 +213,7 @@ class MalibuService(object):
     @retry_policy()
     def get_workflow_status(self, workflow_id):
         """ submits a GET HTTP request to retrieve the status of a workflow """
-        headers = MalibuService.get_headers(self.subscription_key)
+        headers = MalibuService.get_headers(self.access_key)
         url = self.get_workflow_url(workflow_id)
 
         response = requests.get(url, headers=headers)
