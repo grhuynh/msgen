@@ -38,6 +38,11 @@
     <Compile Include="tests\test_malibuworkflow.py" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="docs\source\faq.rst" />
+    <Content Include="docs\source\index.rst" />
+    <Content Include="docs\source\migration.rst" />
+    <Content Include="docs\source\requirements.txt" />
+    <Content Include="docs\source\whatsnew.rst" />
     <Content Include="docs\source\_static\api-url-base.png" />
     <Content Include="docs\source\_static\style.css" />
     <Content Include="docs\source\_static\subscription-key.png" />

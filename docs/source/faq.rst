@@ -4,7 +4,7 @@ Frequently asked questions
 
 My commands stopped working after upgrading. What do I do?
 ----------------------------------------------------------
-Most likely you have upgraded from msgen 0.6.* to 0.7.0. Please see the :ref:`breaking-changes` section for guidance. You can also downgrade to a previous
+Most likely you have upgraded from msgen 0.6.* to 0.7.*. Please see the :ref:`breaking-changes` section for guidance. You can also downgrade to a previous
 version by running the following command:
 
 ::
@@ -19,15 +19,17 @@ For example, the following command will install version 0.6.15:
 
 Where do I get the value for ``--api-url-base``?
 ------------------------------------------------
-During the preview, please use https://malibutest0044.azure-api.net. After the preview, there will be a new URL provided.
+Go to Azure Portal and open you Genomics account page. Choose the "Access keys" blade. There you will find both the API URL and your access keys.
 
-Where do I get the value for ``--subscription-key``?
+Where do I get the value for ``--access-key``?
 ----------------------------------------------------
-Navigate to https://malibutest0044.portal.azure-api.net and log in to the Microsoft Genomics API portal. Click your name in
-the top right corner of the page and choose *Profile*. You will see subscription details for the Microsoft Genomics service.
-You need to provide either the primary or secondary key for the value of ``--subscription-key`` (highlighted in orange on the screenshot).
+Go to Azure Portal and open you Genomics account page. Choose the "Access keys" blade. There you will find both the API URL and your access keys.
 
-.. image:: _static/subscription-key.png
+Why do I need two access keys?
+------------------------------
+You need two access keys in case you want to update (regenerate) them without interrupting usage of the service. Say, you want to update the first
+key. In that case, you will switch all new workflows to using the second key, wait until the already running workflows using the first key are
+finished, and only then will update the key.
 
 How do I upload files to Azure?
 -------------------------------
@@ -58,8 +60,8 @@ the value is in hours.
 How do I submit a pair of FASTQ files for processing?
 -----------------------------------------------------
 Let’s assume you have two files, *reads_1.fq.gz* and *reads_2.fq.gz*, and you have uploaded them to your storage account *myaccount* in Azure as
-https://myaccount.blob.core.windows.net/inputs/reads_1.fq.gz and https://myaccount.blob.core.windows.net/inputs/reads_2.fq.gz. You have the API URL and your API
-subscription key. You want to have outputs in https://myaccount.blob.core.windows.net/outputs. 
+https://myaccount.blob.core.windows.net/inputs/reads_1.fq.gz and https://myaccount.blob.core.windows.net/inputs/reads_2.fq.gz. You have the API URL and your
+access key. You want to have outputs in https://myaccount.blob.core.windows.net/outputs. 
 
 Here is the minimal set of arguments that you will need to provide; line breaks are added for clarity:
 
@@ -67,32 +69,32 @@ Here is the minimal set of arguments that you will need to provide; line breaks 
    :caption: Windows console
 
    msgen submit ^
-     --api-url-base https://malibutest0044.azure-api.net ^
-     --subscription-key <API subscription key> ^
-     --process-args R=grch37bwa ^
+     --api-url-base <Genomics API URL> ^
+     --access-key <Genomics access key> ^
+     --process-args R=b37m1 ^
      --input-storage-account-name myaccount ^
-     --input-storage-account-key <access key to "myaccount"> ^
+     --input-storage-account-key <storage access key to "myaccount"> ^
      --input-storage-account-container inputs ^
      --input-blob-name-1 reads_1.fq.gz ^
      --input-blob-name-2 reads_2.fq.gz ^
      --output-storage-account-name myaccount ^
-     --output-storage-account-key <access key to "myaccount"> ^
+     --output-storage-account-key <storage access key to "myaccount"> ^
      --output-storage-account-container outputs
 
 .. code-block:: sh
    :caption: Unix console
 
    msgen submit \
-     --api-url-base https://malibutest0044.azure-api.net \
-     --subscription-key <API subscription key> \
-     --process-args R=grch37bwa \
+     --api-url-base <Genomics API URL> \
+     --access-key <Genomics access key> \
+     --process-args R=b37m1 \
      --input-storage-account-name myaccount \
-     --input-storage-account-key <access key to "myaccount"> \
+     --input-storage-account-key <storage access key to "myaccount"> \
      --input-storage-account-container inputs \
      --input-blob-name-1 reads_1.fq.gz \
      --input-blob-name-2 reads_2.fq.gz \
      --output-storage-account-name myaccount \
-     --output-storage-account-key <access key to "myaccount"> \
+     --output-storage-account-key <storage access key to "myaccount"> \
      --output-storage-account-container outputs
 
 If you prefer using a configuration file, here is what it would contain:
@@ -100,16 +102,16 @@ If you prefer using a configuration file, here is what it would contain:
 .. code-block:: yaml
    :caption: config.txt
 
-   api_url_base:                     https://malibutest0044.azure-api.net
-   subscription_key:                 <API subscription key>
-   process_args:                     R=grch37bwa
+   api_url_base:                     <Genomics API URL>
+   access_key:                       <Genomics access key>
+   process_args:                     R=b37m1
    input_storage_account_name:       myaccount
-   input_storage_account_key:        <access key to "myaccount">
+   input_storage_account_key:        <storage access key to "myaccount">
    input_storage_account_container:  inputs
    input_blob_name_1:                reads_1.fq.gz
    input_blob_name_2:                reads_2.fq.gz
    output_storage_account_name:      myaccount
-   output_storage_account_key:       <access key to "myaccount">
+   output_storage_account_key:       <storage access key to "myaccount">
    output_storage_account_container: outputs
 
 And you would submit it with this invocation: ``msgen submit -f config.txt``.
@@ -155,47 +157,47 @@ added for clarity.
    :caption: Windows console
 
    msgen submit ^
-     --api-url-base https://malibutest0044.azure-api.net ^
-     --subscription-key <API subscription key> ^
-     --process-args R=grch37bwa ^
+     --api-url-base <Genomics API URL> ^
+     --access-key <Genomics access key> ^
+     --process-args R=b37m1 ^
      --input-storage-account-name myaccount ^
-     --input-storage-account-key <access key to "myaccount"> ^
+     --input-storage-account-key <storage access key to "myaccount"> ^
      --input-storage-account-container inputs ^
      --input-blob-name-1 ERR194158_1.fastq.gz ERR194159_1.fastq.gz ERR194160_1.fastq.gz ^
      --input-blob-name-2 ERR194158_2.fastq.gz ERR194159_2.fastq.gz ERR194160_2.fastq.gz ^
      --output-storage-account-name myaccount ^
-     --output-storage-account-key <access key to "myaccount"> ^
+     --output-storage-account-key <storage access key to "myaccount"> ^
      --output-storage-account-container outputs
 
 .. code-block:: sh
    :caption: Unix console
 
    msgen submit \
-     --api-url-base https://malibutest0044.azure-api.net \
-     --subscription-key <API subscription key> \
-     --process-args R=grch37bwa \
+     --api-url-base <Genomics API URL> \
+     --access-key <Genomics access key> \
+     --process-args R=b37m1 \
      --input-storage-account-name myaccount \
-     --input-storage-account-key <access key to "myaccount"> \
+     --input-storage-account-key <storage access key to "myaccount"> \
      --input-storage-account-container inputs \
      --input-blob-name-1 ERR194158_1.fastq.gz ERR194159_1.fastq.gz ERR194160_1.fastq.gz \
      --input-blob-name-2 ERR194158_2.fastq.gz ERR194159_2.fastq.gz ERR194160_2.fastq.gz \
      --output-storage-account-name myaccount \
-     --output-storage-account-key <access key to "myaccount"> \
+     --output-storage-account-key <storage access key to "myaccount"> \
      --output-storage-account-container outputs
 
 .. code-block:: yaml
    :caption: config.txt
 
-   api_url_base:                     https://malibutest0044.azure-api.net
-   subscription_key:                 <API subscription key>
-   process_args:                     R=grch37bwa
+   api_url_base:                     <Genomics API URL>
+   access_key:                       <Genomics access key>
+   process_args:                     R=b37m1
    input_storage_account_name:       myaccount
-   input_storage_account_key:        <access key to "myaccount">
+   input_storage_account_key:        <storage access key to "myaccount">
    input_storage_account_container:  inputs
    input_blob_name_1:                ERR194158_1.fastq.gz ERR194159_1.fastq.gz ERR194160_1.fastq.gz
    input_blob_name_2:                ERR194158_2.fastq.gz ERR194159_2.fastq.gz ERR194160_2.fastq.gz
    output_storage_account_name:      myaccount
-   output_storage_account_key:       <access key to "myaccount">
+   output_storage_account_key:       <storage access key to "myaccount">
    output_storage_account_container: outputs
 
 The above configuration file would be used with this invocation: ``msgen submit -f config.txt``.
@@ -223,15 +225,15 @@ Below are example submissions from a command line in Windows, in Unix, and using
    :emphasize-lines: 8
 
    msgen submit ^
-     --api-url-base https://malibutest0044.azure-api.net ^
-     --subscription-key <API subscription key> ^
-     --process-args R=grch37bwa ^
+     --api-url-base <Genomics API URL> ^
+     --access-key <Genomics access key> ^
+     --process-args R=b37m1 ^
      --input-storage-account-name myaccount ^
-     --input-storage-account-key <access key to "myaccount"> ^
+     --input-storage-account-key <storage access key to "myaccount"> ^
      --input-storage-account-container inputs ^
      --input-blob-name-1 ERR194158.bam ERR194159.bam ERR194160.bam ^
      --output-storage-account-name myaccount ^
-     --output-storage-account-key <access key to "myaccount"> ^
+     --output-storage-account-key <storage access key to "myaccount"> ^
      --output-storage-account-container outputs
 
 .. code-block:: sh
@@ -239,30 +241,30 @@ Below are example submissions from a command line in Windows, in Unix, and using
    :emphasize-lines: 8
 
    msgen submit \
-     --api-url-base https://malibutest0044.azure-api.net \
-     --subscription-key <API subscription key> \
-     --process-args R=grch37bwa \
+     --api-url-base <Genomics API URL> \
+     --access-key <Genomics access key> \
+     --process-args R=b37m1 \
      --input-storage-account-name myaccount \
-     --input-storage-account-key <access key to "myaccount"> \
+     --input-storage-account-key <storage access key to "myaccount"> \
      --input-storage-account-container inputs \
      --input-blob-name-1 ERR194158.bam ERR194159.bam ERR194160.bam \
      --output-storage-account-name myaccount \
-     --output-storage-account-key <access key to "myaccount"> \
+     --output-storage-account-key <storage access key to "myaccount"> \
      --output-storage-account-container outputs
 
 .. code-block:: yaml
    :caption: config.txt
    :emphasize-lines: 7
 
-   api_url_base:                     https://malibutest0044.azure-api.net
-   subscription_key:                 <API subscription key>
-   process_args:                     R=grch37bwa
+   api_url_base:                     <Genomics API URL>
+   access_key:                       <Genomics access key>
+   process_args:                     R=b37m1
    input_storage_account_name:       myaccount
-   input_storage_account_key:        <access key to "myaccount">
+   input_storage_account_key:        <storage access key to "myaccount">
    input_storage_account_container:  inputs
    input_blob_name_1:                ERR194158.bam ERR194159.bam ERR194160.bam
    output_storage_account_name:      myaccount
-   output_storage_account_key:       <access key to "myaccount">
+   output_storage_account_key:       <storage access key to "myaccount">
    output_storage_account_container: outputs
 
 The above configuration file would be used with this invocation: ``msgen submit -f config.txt``.
@@ -273,15 +275,17 @@ We currently support these references:
 
 .. cssclass:: table-bordered
 
-+-----------------------+---------------------------------+
-|Reference              |Value of ``-pa/--process-args``  |
-+=======================+=================================+
-|GRCh37                 |``R=grch37bwa``                  |
-+-----------------------+---------------------------------+
-|GRCh38 (no ALT contigs)|``R=grch38_NoAltAnalysisSet_bwa``|
-+-----------------------+---------------------------------+
-|hg19                   |``R=hg19bwa``                    |
-+-----------------------+---------------------------------+
++----------------------+-------------------------------+
+|Reference             |Value of ``-pa/--process-args``|
++======================+===============================+
+|b37                   |``R=b37m1``                    |
++----------------------+-------------------------------+
+|hg38                  |``R=hg38m1``                   |
++----------------------+-------------------------------+
+|hg38 (No Alt Analysis)|``R=hg38m1x``                  |
++----------------------+-------------------------------+
+|hg19                  |``R=hg19m1``                   |
++----------------------+-------------------------------+
 
 Where do I learn more about available commands and options?
 -----------------------------------------------------------
@@ -305,15 +309,15 @@ with underscores. Here are some conversion examples:
 
 .. cssclass:: table-bordered
 
-+----------------------------------+---------------------------+
-|Command line argument             |Configuration file line    |
-+==================================+===========================+
-|``-u/--api-url-base https://url`` |*api_url_base: https://url*|
-+----------------------------------+---------------------------+
-|``-k/--subscription-key KEY``     |*subscription_key: KEY*    |
-+----------------------------------+---------------------------+
-|``-pa/--process-args R=grch37bwa``|*process_args: R=grch37bwa*|
-+----------------------------------+---------------------------+
++---------------------------------+---------------------------+
+|Command line argument            |Configuration file line    |
++=================================+===========================+
+|``-u/--api-url-base https://url``|*api_url_base: https://url*|
++---------------------------------+---------------------------+
+|``-k/--access-key KEY``          |*access_key: KEY*          |
++---------------------------------+---------------------------+
+|``-pa/--process-args R=b37m1``   |*process_args: R=b37m1*    |
++---------------------------------+---------------------------+
 
 Can I contribute to msgen?
 --------------------------

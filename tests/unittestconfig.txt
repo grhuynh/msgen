@@ -7,7 +7,7 @@
 access_key:				        	key
 command:							submit
 process_name:						snapgatk
-process_args:						R=grch37bwa
+process_args:						R=b37m1
 input_storage_account_type:			AZURE_BLOCK_BLOB
 input_storage_account_name:			account
 input_storage_account_key:			key

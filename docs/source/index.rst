@@ -2,9 +2,7 @@
 Getting started with msgen
 ==========================
 
-msgen is a command-line client for the Microsoft Genomics service which is currently available via a private preview program.
-
-.. important:: msgen 0.7.0 introduced some user interface changes. If you are upgrading from an earlier version of msgen, see :doc:`whatsnew` for a description of what to expect, what changes you must make, and the new functionality for this release.
+msgen is a command-line client for the Microsoft Genomics service.
 
 On this site
 ------------
@@ -14,6 +12,7 @@ On this site
    self
    whatsnew
    faq
+   migration
 
 Installation
 ------------
@@ -36,7 +35,8 @@ Windows
 
 
 If you do not want to install msgen as a system-wide binary and modify system-wide python packages, use the
-``--user`` flag with ``pip``.
+``--user`` flag with ``pip``. In that case you will need to add ``~/.local/bin`` to your path in Linux and
+``%APPDATA%\Python`` in Windows.
 
 Basic requirements
 ~~~~~~~~~~~~~~~~~~~
@@ -60,18 +60,20 @@ After installing msgen, a simple command to check connectivity is:
    :caption: Windows console
 
    msgen list ^
-     --api-url-base     https://malibutest0044.azure-api.net ^
-     --subscription-key <API subscription key>
+     --api-url-base     <Genomics API URL> ^
+     --subscription-key <Genomics account access key>
 
 .. code-block:: sh
    :caption: Unix console
 
    msgen list \
-     --api-url-base     https://malibutest0044.azure-api.net \
-     --subscription-key <API subscription key>
+     --api-url-base     <Genomics API URL> \
+     --subscription-key <Genomics account access key>
+
+Values for both these arguments can be found in Azure Portal, on the Access keys blade of your Genomics account.
 
 You can get a full list of available commands and arguments by running ``msgen help``, but generally you will
-need to provide at least a command, ``--api-url-base``, and ``--subscription-key``, where the command is one
+need to provide at least a command, ``--api-url-base``, and ``--access-key``, where the command is one
 of the following:
 
 ==========  =====
