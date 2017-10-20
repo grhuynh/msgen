@@ -12,7 +12,8 @@ Release notes
 4. Export to CSV of the ``list`` command output.
 5. Bug fixes!
 
-This version of msgen also introduces user interface changes. If you would like to keep using an older version, you can downgrade back
+This version of msgen also introduces user interface changes compared to version 0.6.*.
+If you would like to keep using an older version, you can downgrade back
 to 0.6.15 by running the following command:
 
 ::
