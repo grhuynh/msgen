@@ -2,7 +2,7 @@
 Getting started with msgen
 ==========================
 
-msgen is a command-line client for the Microsoft Genomics service.
+msgen is a command-line client for the Microsoft Genomics service. You can follow the instructions below or try the Azure notebook tutorial `here <http://aka.ms/genomicsnotebook>`_ .
 
 On this site
 ------------

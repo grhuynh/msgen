@@ -27,7 +27,6 @@ if errorlevel 9009 (
 )
 
 %SPHINXBUILD% -M html %SOURCEDIR% %BUILDDIR% %SPHINXOPTS%
-powershell .\Zip.ps1 -Source .\build\html -Destination .\build\docs.zip
 goto end
 
 :help
