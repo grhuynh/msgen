@@ -21,22 +21,29 @@ VERSION = '0.7.2'
 def warn_for_package_update():
     """Check for updated version of msgen and warn if a newer version is available"""
 
+    pypiRoot = "https://pypi.python.org"
+    connect_timeout = 0.1
+    read_timeout = 0.1
+
     try:
         import requests
         from distutils.version import StrictVersion
 
         # Construct the URL to get the msgen package information from pypi
-        url = "https://pypi.python.org/pypi/{0}/json".format(malibuargs.PACKAGE_NAME)
-        versions = requests.get(url).json()["releases"].keys()
+        #   and extract pypi's version information from the payload
+        url = "{0}/pypi/{1}/json".format(pypiRoot, malibuargs.PACKAGE_NAME)
+        versions = requests.get(url, timeout=(connect_timeout, read_timeout)).json()["releases"].keys()
         versions.sort(key=StrictVersion, reverse=True)
         if VERSION < versions[0]:
-            print ("\nThere is a newer version of msgen available."
-                   "  Please consider upgrading to v%s."
-                   "\nTo upgrade, run: pip install --upgrade msgen\n"
-                  ) % versions[0]
+            print("\n*** INFO ***"
+                  "\nA newer version of msgen is available.  Please consider upgrading to v{0:s}."
+                  "\n  To upgrade, run: pip install --upgrade msgen"
+                  "\n".format( versions[0] ))
 
-    except:
-        print "\nException during test for msgen update. Continuing\n"
+    except (requests.Timeout, requests.ConnectionError):
+        print("\n*** INFO ***"
+              "\nUnable to connect to {0} to check for updates."
+              "\n".format(pypiRoot))
 
     return
 

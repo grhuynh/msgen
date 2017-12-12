@@ -172,7 +172,7 @@ class WorkflowExecutor(object):
 
     def poll_workflow_status_blocking(self, workflow_id=0, success_status=20000):
         """ Polls the status of submitted workflow """
-        poll_interval_seconds = 10
+        poll_interval_seconds = 60
         if workflow_id == 0:
             workflow_id = self.args_output.workflow_id
         poll = True
