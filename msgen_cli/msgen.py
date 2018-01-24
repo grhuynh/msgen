@@ -48,7 +48,7 @@ def warn_for_package_update(current_version):
         print "\n*** INFO ***" \
               "\nInvalid JSON received by {0} when checking for updates." \
               "\n".format(pypiRoot)
-    except (requests.Timeout, requests.ConnectionError):
+    except (requests.Timeout, requests.ConnectionError, requests.exceptions.RequestException):
         print "\n*** INFO ***" \
               "\nUnable to connect to {0} to check for updates." \
               "\n".format(pypiRoot)
