@@ -22,8 +22,6 @@ class TestParse(unittest.TestCase):
         argv = "status -f tests/unittestconfig.txt -w 123".split()
         args = malibuargs.parse(argv, None, None, None, None, None)
         self.assertEquals(args.command, "status")
-        self.assertEquals(args.api_url_base, "https://malibudev0018.azure-api.net")
-        self.assertEquals(args.access_key, "key")
         self.assertEquals(args.workflow_id, "123")
 
     def test_parse_fails_without_required_options(self):

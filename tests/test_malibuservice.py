@@ -58,16 +58,6 @@ class RetryPolicyTest(unittest.TestCase):
         self.assertRaises(requests.exceptions.ConnectionError,
                           lambda: service_call(200, 503, 7, retries, ex))
 
-        #@malibuservice.retry_policy(10,2,2,5)
-        #def service_call(good_response, bad_response, num_of_bad, counter, exception = None):
-        #    while counter[0] < num_of_bad:
-        #        counter[0] = counter[0] + 1
-        #        if exception != None:
-        #            raise exception
-        #        return bad_response, 0
-        #    return good_response, 0
-        #print "Here"
-        #response = service_call(200, 503, 100, r, ex)
 
 @unittest.skip("Not a unit test.")
 class MalibuServiceTest(unittest.TestCase):
@@ -98,7 +88,9 @@ class MalibuServiceTest(unittest.TestCase):
             self.input_dic,
             self.output_dic,
             self.description,
-            self.workflow_class)
+            None,
+            self.workflow_class,
+            False)
 
         self.assertTrue(response_code == 200 and
                         workflow["Id"] > 0)
@@ -107,7 +99,7 @@ class MalibuServiceTest(unittest.TestCase):
 
         self.assertTrue(response_code == 200)
         self.assertTrue(workflow["Message"] is None)
-        self.assertTrue(workflow["Status"] == 58000)
+        self.assertTrue(workflow["Status"] == 58000 or workflow["Status"] == 60000)
 
     def test_create_and_get_status(self):
         """Tests creation and status"""
@@ -118,7 +110,9 @@ class MalibuServiceTest(unittest.TestCase):
             self.storage_account_type,
             self.input_dic, self.output_dic,
             self.description,
-            self.workflow_class)
+            None,
+            self.workflow_class,
+            False)
 
         self.assertTrue(response_code == 200 and workflow["Id"] > 0)
 
@@ -146,7 +140,9 @@ class MalibuServiceTest(unittest.TestCase):
             self.input_dic,
             self.output_dic,
             self.description,
-            self.workflow_class)
+            None,
+            self.workflow_class,
+            False)
 
         self.assertTrue(response_code == 200 and workflow["Id"] > 0)
 
@@ -160,7 +156,9 @@ class MalibuServiceTest(unittest.TestCase):
             self.input_dic,
             self.output_dic,
             "my description",
-            self.workflow_class)
+            None,
+            self.workflow_class,
+            False)
 
         self.assertTrue(response_code == 200 and workflow["Id"] > 0)
         self.assertTrue(workflow["Description"] == "my description")
