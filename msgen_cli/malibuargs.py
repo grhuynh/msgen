@@ -232,7 +232,7 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
     submit_required.add_argument("-pa", "--process-args",
                                  metavar="ARGS",
                                  required=True,
-                                 type=malibuargsactions.nstr,
+                                 type=malibuargsactions.process_args_validator,
                                  help="""arguments for the genomics process; this is usually used to specify a desired reference genome, for example,
                                  'R=b37m1' or 'R=hg19m1' or 'R=hg38m1' or 'R=hg38m1x'""")
     submit_required.add_argument("-ia", "--input-storage-account-name",

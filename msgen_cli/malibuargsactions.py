@@ -172,7 +172,6 @@ def to_bool(value):
     raise argparse.ArgumentTypeError(error)
 
 BAD_BLOB_CHARS = re.compile("[^A-Za-z0-9._/-]")
-
 def _blob_name_validator(value):
     """Blob name validator based on regular expression"""
     # Name length 1-1024 (https://docs.microsoft.com/en-us/azure/guidance/guidance-naming-conventions#naming-rules-and-restrictions)
@@ -183,12 +182,35 @@ def _blob_name_validator(value):
     if len(value) > 1024:
         raise argparse.ArgumentTypeError("maximum length is 1024 characters; found a value of length {0}".format(len(value)))
     if bool(BAD_BLOB_CHARS.search(value)):
-        error = "each name should contain only alphanumeric characters, dot, dash, underscore, and slash"
+        error = "each name should only contain alphanumeric characters, dot, dash, underscore, and slash"
         raise argparse.ArgumentTypeError(error + "; found [{0}]".format(value))
     # We will not allow a leading slash in a blob name
     if value.startswith("/"):
         raise argparse.ArgumentTypeError("blob names cannot start with a slash; found [{0}]".format(value))
     return value
+
+BAD_REFERENCE_CHARS = re.compile("[^A-Za-z0-9]")
+ARG_DELIMITER = ";"
+KEY_VALUE_DELIMITER = "="
+def _process_args_validator(value):
+    """Process args validator \\"""
+    if not value or value is None:
+        raise argparse.ArgumentTypeError("a non-empty, non-whitespace string is expected")
+    value = value.strip()
+    if not value or value is None:
+        raise argparse.ArgumentTypeError("a non-empty, non-whitespace string is expected")
+    kv_pairs = value.split(ARG_DELIMITER)
+    for kv_pair in kv_pairs:
+        kv = kv_pair.split(KEY_VALUE_DELIMITER)
+        if kv[0]=="R":
+            if bool(BAD_REFERENCE_CHARS.search(kv[1])):
+                error = "the reference should only contain alphanumeric characters"
+                raise argparse.ArgumentTypeError(error + "; found [{0}]".format(value))
+    return value
+
+def process_args_validator(value):
+    """Process arguments validator"""
+    return _process_args_validator(value)
 
 def input_validator(value):
     """Input blob name validator"""
