@@ -324,6 +324,11 @@ def validate_namespace(parser, namespace):
     if namespace.command != "submit":
         return namespace
 
+    if ((namespace.output_storage_account_key or namespace.input_storage_account_key) and 
+        namespace.output_storage_account_container and 
+        "?" in namespace.output_storage_account_container):
+        raise parser.error("cannot mix storage account key(s) and SAS.  You must only use keys, or only use SAS")
+
     # 0. Make sure we have something as input.
     if not namespace.input_blob_name_1:
         namespace.input_blob_name_1 = []
@@ -334,6 +339,8 @@ def validate_namespace(parser, namespace):
     all_blob_names = []
     for blob_name in namespace.input_blob_name_1 + namespace.input_blob_name_2:
         if "?" in blob_name:
+            if namespace.input_storage_account_key or namespace.output_storage_account_key:
+                raise parser.error("cannot mix storage account key(s) and SAS.  You must only use keys, or only use SAS")
             blob_name_parts = blob_name.split("?")
             all_blob_names.append(blob_name_parts[0])
         else:
@@ -363,5 +370,5 @@ def validate_namespace(parser, namespace):
                 raise parser.error("the same file is used at the same position in both -b1/--input-blob-name-1 and -b2/--input-blob-name-2: [{0}]".format(first))
             if not differ_in_at_most_one(first, second) and not namespace.suppress_fastq_validation:
                 print >> sys.stderr, _name_mismatch_error.format(first, second)
-
+    
     return namespace
