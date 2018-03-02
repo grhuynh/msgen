@@ -242,8 +242,7 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  help="Azure storage account name where input files reside")
     submit_required.add_argument("-ik", "--input-storage-account-key",
                                  metavar="KEY",
-                                 required=True,
-                                 type=malibuargsactions.nstr,
+                                 required=False,
                                  help="Azure storage account key which will be used to create temporary access tokens for input files")
     submit_required.add_argument("-ic", "--input-storage-account-container",
                                  metavar="CONTAINER",
@@ -255,13 +254,13 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  required=True,
                                  type=malibuargsactions.input_validator,
                                  nargs="+",
-                                 help="first file name")
+                                 help="first file name; SAS can be appended")
     submit_required.add_argument("-b2", "--input-blob-name-2",
                                  metavar="BLOBNAME",
                                  required=False,
                                  type=malibuargsactions.input_validator,
                                  nargs="+",
-                                 help="second file name, needed only if input is in the FASTQ format")
+                                 help="second file name, needed only if input is in the FASTQ format; SAS can be appended")
     submit_required.add_argument("-oa", "--output-storage-account-name",
                                  metavar="ACCOUNT",
                                  required=True,
@@ -269,14 +268,13 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  help="Azure storage account name where output files will be placed")
     submit_required.add_argument("-ok", "--output-storage-account-key",
                                  metavar="KEY",
-                                 required=True,
-                                 type=malibuargsactions.nstr,
+                                 required=False,
                                  help="Azure storage account key which will be used to create a temporary access token for an output container")
     submit_required.add_argument("-oc", "--output-storage-account-container",
                                  metavar="CONTAINER",
                                  required=True,
-                                 type=malibuargsactions.nstr,
-                                 help="Azure blob container where output files will be placed")
+                                 type=malibuargsactions.output_container_validator,
+                                 help="Azure blob container where output files will be placed; SAS can be appended")
 
     submit_optional = submit_parser.add_argument_group("optional arguments for submitting a workflow")
     submit_optional.add_argument("-p", "--process-name",

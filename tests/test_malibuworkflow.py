@@ -312,7 +312,25 @@ class TestMalibuWorkflow(unittest.TestCase):
         inputs, outputs = workflow.get_input_and_output_dict()
         self.assertEquals(inputs["BLOBNAMES"], "file.bam,")
 
+    def test_get_input_output_dict_handles_one_file_with_sas(self):
+        args = testargs.get_test_args()
+        args.input_blob_name_1 = ["file.bam?sas"]
+        args.input_blob_name_2 = []
+        workflow = malibuworkflow.WorkflowExecutor(args)
+        workflow.datatransfer = FakeDataTransfer(None)
+
+        inputs, outputs = workflow.get_input_and_output_dict()
+        self.assertEquals(inputs["BLOBNAMES"], "file.bam,")
+
     def test_get_input_output_dict_handles_two_files(self):
+        args = testargs.get_test_args()       
+        workflow = malibuworkflow.WorkflowExecutor(args)
+        workflow.datatransfer = FakeDataTransfer(None)
+
+        inputs, outputs = workflow.get_input_and_output_dict()
+        self.assertEquals(inputs["BLOBNAMES"], "chr21-10k_1.fq.gz,chr21-10k_2.fq.gz,")
+
+    def test_get_input_output_dict_handles_two_files_with_sas(self):
         args = testargs.get_test_args()       
         workflow = malibuworkflow.WorkflowExecutor(args)
         workflow.datatransfer = FakeDataTransfer(None)
@@ -324,6 +342,17 @@ class TestMalibuWorkflow(unittest.TestCase):
         args = testargs.get_test_args()
         args.input_blob_name_1 = ["chr21-10k_1.fq.gz", "chr22-10k_1.fq.gz"]
         args.input_blob_name_2 = ["chr21-10k_2.fq.gz", "chr22-10k_2.fq.gz"]
+        workflow = malibuworkflow.WorkflowExecutor(args)
+        workflow.datatransfer = FakeDataTransfer(None)
+
+        inputs, outputs = workflow.get_input_and_output_dict()
+        self.assertEquals(inputs["BLOBNAMES"], "chr21-10k_1.fq.gz,chr21-10k_2.fq.gz,chr22-10k_1.fq.gz,chr22-10k_2.fq.gz,")
+
+
+    def test_get_input_output_dict_handles_multiple_files_with_sas(self):
+        args = testargs.get_test_args()
+        args.input_blob_name_1 = ["chr21-10k_1.fq.gz?sas", "chr22-10k_1.fq.gz?sas"]
+        args.input_blob_name_2 = ["chr21-10k_2.fq.gz?sas", "chr22-10k_2.fq.gz?sas"]
         workflow = malibuworkflow.WorkflowExecutor(args)
         workflow.datatransfer = FakeDataTransfer(None)
 

@@ -172,21 +172,56 @@ def to_bool(value):
     raise argparse.ArgumentTypeError(error)
 
 BAD_BLOB_CHARS = re.compile("[^A-Za-z0-9._/-]")
-def _blob_name_validator(value):
+BAD_CONTAINER_CHARS = re.compile("[^A-Za-z0-9-]")
+BAD_SAS_CHARS = re.compile("[^A-Za-z0-9&?=%]")
+def _blob_name_validator(value, is_input = False):
     """Blob name validator based on regular expression"""
     # Name length 1-1024 (https://docs.microsoft.com/en-us/azure/guidance/guidance-naming-conventions#naming-rules-and-restrictions)
-    # Characters: alphanumeric, dot, dash, slash, and underscore
+    # Characters: alphanumeric, dot, dash, slash, and underscore.  
+
     value = value.strip()
     if not value:
         raise argparse.ArgumentTypeError("empty or whitespace-only names are not allowed; found [{}]".format(value))
     if len(value) > 1024:
         raise argparse.ArgumentTypeError("maximum length is 1024 characters; found a value of length {0}".format(len(value)))
-    if bool(BAD_BLOB_CHARS.search(value)):
-        error = "each name should only contain alphanumeric characters, dot, dash, underscore, and slash"
-        raise argparse.ArgumentTypeError(error + "; found [{0}]".format(value))
-    # We will not allow a leading slash in a blob name
     if value.startswith("/"):
         raise argparse.ArgumentTypeError("blob names cannot start with a slash; found [{0}]".format(value))
+    
+    blob_name_parts = value.split("?")   
+    blob_name_parts_count = len(blob_name_parts)
+
+    if bool(BAD_BLOB_CHARS.search(blob_name_parts[0])):
+        error = "each name should only contain alphanumeric characters, dot, hyphen, underscore, and slash"
+        raise argparse.ArgumentTypeError(error + "; found [{0}]".format(blob_name_parts[0]))
+    if is_input:
+        if blob_name_parts_count == 2:
+            if bool(BAD_SAS_CHARS.search(blob_name_parts[1])):
+                error = "each SAS should only contain alphanumeric characters, question mark, equals, percent, and ampersand"
+                raise argparse.ArgumentTypeError(error + "; found [{0}]".format(blob_name_parts[1]))
+        elif blob_name_parts_count > 2:
+            raise argparse.ArgumentTypeError("blob names cannot have more than one question market; found a value of length {0}".format(blob_name_parts_count)) 
+    else:
+        if blob_name_parts_count > 1:
+            raise argparse.ArgumentTypeError("output SAS can only be appended to the container name")
+
+    return value
+
+
+def _output_container_name_validator(value):
+    """Blob name validator based on regular expression"""   
+    container_name_parts = value.split("?")   
+    container_name_parts_count = len(container_name_parts)
+
+    if bool(BAD_BLOB_CHARS.search(container_name_parts[0])):
+        error = "container name should only contain alphanumeric characters and hyphens"
+        raise argparse.ArgumentTypeError(error + "; found [{0}]".format(container_name_parts[0]))
+    if container_name_parts_count == 2:
+        if bool(BAD_SAS_CHARS.search(container_name_parts[1])):
+            error = "each SAS should only contain question mark, alphanumeric characters, equals, percent, and ampersand"
+            raise argparse.ArgumentTypeError(error + "; found [{0}]".format(container_name_parts[1]))
+    elif container_name_parts_count > 2:
+        raise argparse.ArgumentTypeError("container names cannot have more than one question market; found a value of length {0}".format(container_name_parts_count)) 
+
     return value
 
 BAD_REFERENCE_CHARS = re.compile("[^A-Za-z0-9]")
@@ -214,13 +249,17 @@ def process_args_validator(value):
 
 def input_validator(value):
     """Input blob name validator"""
-    return _blob_name_validator(value)
+    return _blob_name_validator(value, True)
 
 def output_validator(value):
     """Output blob name validator"""
     if not value or not value.strip():
         return None
-    return _blob_name_validator(value.strip())
+    return _blob_name_validator(value.strip(), False)
+
+def output_container_validator(value):
+    """Output container name validator"""
+    return _output_container_name_validator(value)
 
 ALLOWED_READ_GROUP_CHARACTERS = set(string.letters + string.digits + string.punctuation + " \t") - set("=;")
 MAX_READ_GROUP_LENGTH = 1000
@@ -291,7 +330,16 @@ def validate_namespace(parser, namespace):
         namespace.input_blob_name_1 = []
     if not namespace.input_blob_name_2:
         namespace.input_blob_name_2 = []
-    all_blob_names = namespace.input_blob_name_1 + namespace.input_blob_name_2
+
+    # 0b. Only add blob names to the validation list (omit SAS)
+    all_blob_names = []
+    for blob_name in namespace.input_blob_name_1 + namespace.input_blob_name_2:
+        if "?" in blob_name:
+            blob_name_parts = blob_name.split("?")
+            all_blob_names.append(blob_name_parts[0])
+        else:
+            all_blob_names.append(blob_name)
+
     if len(all_blob_names) == 0:
         raise parser.error("no inputs provided")
 
@@ -308,6 +356,10 @@ def validate_namespace(parser, namespace):
             raise parser.error("each FASTQ file provided in -b1/--input-blob-name-1 should be paired with a FASTQ file in -b2/--input-blob-name-2 at the same position")
         # 3. If names in each pair don't match, show a warning
         for first, second in zip(namespace.input_blob_name_1, namespace.input_blob_name_2):
+            if "?" in first:
+                first = first.split("?")[0]
+            if "?" in second:
+                second = second.split("?")[0]
             if first == second:
                 raise parser.error("the same file is used at the same position in both -b1/--input-blob-name-1 and -b2/--input-blob-name-2: [{0}]".format(first))
             if not differ_in_at_most_one(first, second) and not namespace.suppress_fastq_validation:
