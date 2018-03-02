@@ -329,14 +329,28 @@ def validate_namespace(parser, namespace):
         "?" in namespace.output_storage_account_container):
         raise parser.error("cannot mix storage account keys and SAS tokens.  You must only use keys, or only use SAS tokens")
 
+    if (not namespace.output_storage_account_key and
+        (not namespace.output_storage_account_container or
+        "?" not in namespace.output_storage_account_container)):
+        raise parser.error("you must include either an output storage account key or output storage account container SAS token")
+
+
+    if (not namespace.output_storage_account_key and
+        (not namespace.output_storage_account_container or
+        "?" not in namespace.output_storage_account_container)):
+        raise parser.error("you must include either an output storage account key or output storage account container SAS token")
+
     # 0. Make sure we have something as input.
     if not namespace.input_blob_name_1:
         namespace.input_blob_name_1 = []
     if not namespace.input_blob_name_2:
         namespace.input_blob_name_2 = []
 
-    # 0b. Only add blob names to the validation list (omit SAS)
     all_blob_names = []
+    key_provided_for_blob = False
+    if namespace.input_storage_account_key:
+        key_provided_for_blob = True
+
     for blob_name in namespace.input_blob_name_1 + namespace.input_blob_name_2:
         if "?" in blob_name:
             if namespace.input_storage_account_key or namespace.output_storage_account_key:
@@ -344,6 +358,9 @@ def validate_namespace(parser, namespace):
             blob_name_parts = blob_name.split("?")
             all_blob_names.append(blob_name_parts[0])
         else:
+            if not key_provided_for_blob:
+                # no key and NO SAS token
+                raise parser.error("you must include either an input storage account key or blob SAS token(s)")
             all_blob_names.append(blob_name)
 
     if len(all_blob_names) == 0:
