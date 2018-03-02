@@ -58,8 +58,20 @@ class TestParse(unittest.TestCase):
     def test_parse_runs_successfully_with_unmatching_fastq_names(self):
         argv = "submit -f tests/unittestconfig.txt".split()
         args = malibuargs.parse(argv + ["-b2", "file1.fq"], None, None, None, None, None)
-        self.assertListEqual(args.input_blob_name_1, ["chr21-10k_1.fq.gz"])
-        self.assertListEqual(args.input_blob_name_2, ["file1.fq"])
+        blobs1 = args.input_blob_name_1
+        blobs2 = args.input_blob_name_2
+        blobs1_parsed = []
+        blobs2_parsed = []
+        for blob in blobs1:
+            if "?" in blob:
+                blob = blob.split("?")[0]
+            blobs1_parsed.append(blob)
+        for blob in blobs2:
+            if "?" in blob:
+                blob = blob.split("?")[0]
+            blobs2_parsed.append(blob)
+        self.assertListEqual(blobs1_parsed, ["chr21-10k_1.fq.gz"])
+        self.assertListEqual(blobs2_parsed, ["file1.fq"])
 
     def test_parse_fails_when_command_missing(self):
         argv = "-f tests/unittestconfig.txt".split()

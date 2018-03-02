@@ -172,8 +172,7 @@ def to_bool(value):
     raise argparse.ArgumentTypeError(error)
 
 BAD_BLOB_CHARS = re.compile("[^A-Za-z0-9._/-]")
-BAD_CONTAINER_CHARS = re.compile("[^A-Za-z0-9-]")
-BAD_SAS_CHARS = re.compile("[^A-Za-z0-9&?=%]")
+BAD_SAS_CHARS = re.compile("[^A-Za-z0-9&?=%/-]")
 def _blob_name_validator(value, is_input = False):
     """Blob name validator based on regular expression"""
     # Name length 1-1024 (https://docs.microsoft.com/en-us/azure/guidance/guidance-naming-conventions#naming-rules-and-restrictions)
@@ -196,7 +195,7 @@ def _blob_name_validator(value, is_input = False):
     if is_input:
         if blob_name_parts_count == 2:
             if bool(BAD_SAS_CHARS.search(blob_name_parts[1])):
-                error = "each SAS should only contain alphanumeric characters, question mark, equals, percent, and ampersand"
+                error = "each SAS should only contain alphanumeric characters, question mark, equals, percent, slash, hyphen and ampersand"
                 raise argparse.ArgumentTypeError(error + "; found [{0}]".format(blob_name_parts[1]))
         elif blob_name_parts_count > 2:
             raise argparse.ArgumentTypeError("blob names cannot have more than one question market; found a value of length {0}".format(blob_name_parts_count)) 
