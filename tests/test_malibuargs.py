@@ -51,27 +51,62 @@ class TestParse(unittest.TestCase):
 
     def test_parse_runs_successfully_with_uneven_bam(self):
         argv = "submit -f tests/unittestconfig.txt".split()
-        args = malibuargs.parse(argv + ["-b2", "file1.bam", "-b1", "file1.sam", "file2.sam"], None, None, None, None, None)
-        self.assertListEqual(args.input_blob_name_1, ["file1.sam", "file2.sam"])
-        self.assertListEqual(args.input_blob_name_2, ["file1.bam"])
+        using_key = False
+        with open("tests/unittestconfig.txt", 'r') as file:
+            for line in file:
+                if "input_storage_account_key" in line.lower():
+                    using_key = True
+                    break
+        if using_key:
+            args = malibuargs.parse(argv + ["-b2", "file1.bam", "-b1", "file1.sam", "file2.sam"], None, None, None, None, None)
+            self.assertListEqual(args.input_blob_name_1, ["file1.sam", "file2.sam"])
+            self.assertListEqual(args.input_blob_name_2, ["file1.bam"])
+        else:
+            args = malibuargs.parse(argv + ["-b2", "file1.bam?sas", "-b1", "file1.sam?sas", "file2.sam?sas"], None, None, None, None, None)
+            self.assertListEqual(args.input_blob_name_1, ["file1.sam?sas", "file2.sam?sas"])
+            self.assertListEqual(args.input_blob_name_2, ["file1.bam?sas"])
 
     def test_parse_runs_successfully_with_unmatching_fastq_names(self):
         argv = "submit -f tests/unittestconfig.txt".split()
-        args = malibuargs.parse(argv + ["-b2", "file1.fq"], None, None, None, None, None)
-        blobs1 = args.input_blob_name_1
-        blobs2 = args.input_blob_name_2
-        blobs1_parsed = []
-        blobs2_parsed = []
-        for blob in blobs1:
-            if "?" in blob:
-                blob = blob.split("?")[0]
-            blobs1_parsed.append(blob)
-        for blob in blobs2:
-            if "?" in blob:
-                blob = blob.split("?")[0]
-            blobs2_parsed.append(blob)
-        self.assertListEqual(blobs1_parsed, ["chr21-10k_1.fq.gz"])
-        self.assertListEqual(blobs2_parsed, ["file1.fq"])
+        using_key = False
+        with open("tests/unittestconfig.txt", 'r') as file:
+            for line in file:
+                if "input_storage_account_key" in line.lower():
+                    using_key = True
+                    break
+        if using_key:
+            args = malibuargs.parse(argv + ["-b2", "file1.fq"], None, None, None, None, None)
+            blobs1 = args.input_blob_name_1
+            blobs2 = args.input_blob_name_2
+            blobs1_parsed = []
+            blobs2_parsed = []
+            for blob in blobs1:
+                if "?" in blob:
+                    blob = blob.split("?")[0]
+                blobs1_parsed.append(blob)
+            for blob in blobs2:
+                if "?" in blob:
+                    blob = blob.split("?")[0]
+                blobs2_parsed.append(blob)
+            self.assertListEqual(blobs1_parsed, ["chr21-10k_1.fq.gz"])
+            self.assertListEqual(blobs2_parsed, ["file1.fq"])
+        else:
+            args = malibuargs.parse(argv + ["-b2", "file1.fq?sas"], None, None, None, None, None)
+            blobs1 = args.input_blob_name_1
+            blobs2 = args.input_blob_name_2
+            blobs1_parsed = []
+            blobs2_parsed = []
+            for blob in blobs1:
+                if "?" in blob:
+                    blob = blob.split("?")[0]
+                blobs1_parsed.append(blob)
+            for blob in blobs2:
+                if "?" in blob:
+                    blob = blob.split("?")[0]
+                blobs2_parsed.append(blob)
+            self.assertListEqual(blobs1_parsed, ["chr21-10k_1.fq.gz"])
+            self.assertListEqual(blobs2_parsed, ["file1.fq"])
+
 
     def test_parse_fails_when_command_missing(self):
         argv = "-f tests/unittestconfig.txt".split()
