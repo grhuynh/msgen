@@ -254,13 +254,13 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  required=True,
                                  type=malibuargsactions.input_validator,
                                  nargs="+",
-                                 help="first file name; SAS can be appended")
+                                 help="first file name; SAS token can be appended")
     submit_required.add_argument("-b2", "--input-blob-name-2",
                                  metavar="BLOBNAME",
                                  required=False,
                                  type=malibuargsactions.input_validator,
                                  nargs="+",
-                                 help="second file name, needed only if input is in the FASTQ format; SAS can be appended")
+                                 help="second file name, needed only if input is in the FASTQ format; SAS token can be appended")
     submit_required.add_argument("-oa", "--output-storage-account-name",
                                  metavar="ACCOUNT",
                                  required=True,
@@ -274,7 +274,7 @@ def _get_parser(submit_func, list_func, cancel_func, status_func, help_func):
                                  metavar="CONTAINER",
                                  required=True,
                                  type=malibuargsactions.output_container_validator,
-                                 help="Azure blob container where output files will be placed; SAS can be appended")
+                                 help="Azure blob container where output files will be placed; SAS token can be appended")
 
     submit_optional = submit_parser.add_argument_group("optional arguments for submitting a workflow")
     submit_optional.add_argument("-p", "--process-name",

@@ -195,13 +195,13 @@ def _blob_name_validator(value, is_input = False):
     if is_input:
         if blob_name_parts_count == 2:
             if bool(BAD_SAS_CHARS.search(blob_name_parts[1])):
-                error = "each SAS should only contain alphanumeric characters, question mark, equals, percent, slash, hyphen and ampersand"
+                error = "each SAS token should only contain alphanumeric characters, question mark, equals, percent, slash, hyphen and ampersand"
                 raise argparse.ArgumentTypeError(error + "; found [{0}]".format(blob_name_parts[1]))
         elif blob_name_parts_count > 2:
             raise argparse.ArgumentTypeError("blob names cannot have more than one question market; found a value of length {0}".format(blob_name_parts_count)) 
     else:
         if blob_name_parts_count > 1:
-            raise argparse.ArgumentTypeError("output SAS can only be appended to the container name")
+            raise argparse.ArgumentTypeError("output SAS token can only be appended to the container name")
 
     return value
 
@@ -216,7 +216,7 @@ def _output_container_name_validator(value):
         raise argparse.ArgumentTypeError(error + "; found [{0}]".format(container_name_parts[0]))
     if container_name_parts_count == 2:
         if bool(BAD_SAS_CHARS.search(container_name_parts[1])):
-            error = "each SAS should only contain question mark, alphanumeric characters, equals, percent, and ampersand"
+            error = "each SAS token should only contain alphanumeric characters, question mark, equals, percent, slash, hyphen and ampersand"
             raise argparse.ArgumentTypeError(error + "; found [{0}]".format(container_name_parts[1]))
     elif container_name_parts_count > 2:
         raise argparse.ArgumentTypeError("container names cannot have more than one question market; found a value of length {0}".format(container_name_parts_count)) 
@@ -327,7 +327,7 @@ def validate_namespace(parser, namespace):
     if ((namespace.output_storage_account_key or namespace.input_storage_account_key) and 
         namespace.output_storage_account_container and 
         "?" in namespace.output_storage_account_container):
-        raise parser.error("cannot mix storage account key(s) and SAS.  You must only use keys, or only use SAS")
+        raise parser.error("cannot mix storage account keys and SAS tokens.  You must only use keys, or only use SAS tokens")
 
     # 0. Make sure we have something as input.
     if not namespace.input_blob_name_1:
@@ -340,7 +340,7 @@ def validate_namespace(parser, namespace):
     for blob_name in namespace.input_blob_name_1 + namespace.input_blob_name_2:
         if "?" in blob_name:
             if namespace.input_storage_account_key or namespace.output_storage_account_key:
-                raise parser.error("cannot mix storage account key(s) and SAS.  You must only use keys, or only use SAS")
+                raise parser.error("cannot mix storage account keys and SAS tokens.  You must only use keys, or only use SAS tokens")
             blob_name_parts = blob_name.split("?")
             all_blob_names.append(blob_name_parts[0])
         else:
