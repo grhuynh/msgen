@@ -324,16 +324,10 @@ def validate_namespace(parser, namespace):
     if namespace.command != "submit":
         return namespace
 
-    if ((namespace.output_storage_account_key or namespace.input_storage_account_key) and 
+    if (namespace.output_storage_account_key and 
         namespace.output_storage_account_container and 
         "?" in namespace.output_storage_account_container):
-        raise parser.error("cannot mix storage account keys and SAS tokens.  You must only use keys, or only use SAS tokens")
-
-    if (not namespace.output_storage_account_key and
-        (not namespace.output_storage_account_container or
-        "?" not in namespace.output_storage_account_container)):
-        raise parser.error("you must include either an output storage account key or output storage account container SAS token")
-
+        raise parser.error("cannot specify an output storage account key AND a SAS token.  You must only use a key, or only use a SAS token")
 
     if (not namespace.output_storage_account_key and
         (not namespace.output_storage_account_container or
@@ -353,8 +347,8 @@ def validate_namespace(parser, namespace):
 
     for blob_name in namespace.input_blob_name_1 + namespace.input_blob_name_2:
         if "?" in blob_name:
-            if namespace.input_storage_account_key or namespace.output_storage_account_key:
-                raise parser.error("cannot mix storage account keys and SAS tokens.  You must only use keys, or only use SAS tokens")
+            if namespace.input_storage_account_key:
+                raise parser.error("cannot specify an input storage account key AND blob SAS tokens.  You must only use a key, or only use SAS tokens")
             blob_name_parts = blob_name.split("?")
             all_blob_names.append(blob_name_parts[0])
         else:
