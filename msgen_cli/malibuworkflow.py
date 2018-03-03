@@ -370,7 +370,7 @@ class WorkflowExecutor(object):
             self.add_key_value(output_dic, "CONTAINER",
                                container_name_parts[0], False)
             self.add_key_value(output_dic, "CONTAINER_SAS",
-                               self.datatransfer.output_container, False)
+                               container_name_parts[1], False)
         else:
             self.add_key_value(output_dic, "CONTAINER",
                                self.datatransfer.output_container, False)
