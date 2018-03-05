@@ -365,5 +365,19 @@ class TestReadGroupValidator(unittest.TestCase):
         result = parser.parse_args(["--argument", "@RG\tID:lal ala\tSM:my sample"])
         self.assertEquals(result.argument, "@RG\\tID:lal ala\\tSM:my sample")
 
+
+class TestProcessArgsValidator(unittest.TestCase):
+    def test_throws_if_process_args_is_none(self):
+        parser = argparse.ArgumentParser(self)
+        parser.add_argument("--argument", type=malibuargsactions.process_args_validator)
+        with self.assertRaises(SystemExit):
+            result = parser.parse_args(["--argument", None])
+
+    def test_throws_if_bad_char_in_reference(self):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--argument", type=malibuargsactions.process_args_validator)
+        with self.assertRaises(SystemExit):
+            result = parser.parse_args(["--argument", "R=hg19m1-2"])
+
 if __name__ == '__main__':
     unittest.main()

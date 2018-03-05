@@ -328,26 +328,54 @@ class WorkflowExecutor(object):
                            self.datatransfer.input_container, False)
         for blob1, blob2 in izip_longest(self.args_output.input_blob_name_1, self.args_output.input_blob_name_2):
             if blob1:
-                self.add_key_value(input_dic, "BLOBNAMES", blob1, True)
-                self.add_key_value(input_dic,
-                                   "BLOBNAMES_WITH_SAS",
-                                   self.datatransfer.create_input_blob_sas_url(blob1, self.args_output.sas_duration),
-                                   True)
+                if "?" in blob1:
+                    # SAS token has been included in blobname
+                    blob_name_parts = blob1.split("?")  
+                    self.add_key_value(input_dic, "BLOBNAMES", blob_name_parts[0], True)
+                    self.add_key_value(input_dic,
+                                       "BLOBNAMES_WITH_SAS",
+                                       blob1,
+                                       True)
+                else:
+                    self.add_key_value(input_dic, "BLOBNAMES", blob1, True)
+                    self.add_key_value(input_dic,
+                                       "BLOBNAMES_WITH_SAS",
+                                       self.datatransfer.create_input_blob_sas_url(blob1, self.args_output.sas_duration),
+                                       True)
             if blob2:
-                self.add_key_value(input_dic, "BLOBNAMES", blob2, True)
-                self.add_key_value(input_dic,
-                                   "BLOBNAMES_WITH_SAS",
-                                   self.datatransfer.create_input_blob_sas_url(blob2, self.args_output.sas_duration),
-                                   True)
+                if "?" in blob2:
+                    # SAS token has been included in blobname
+                    blob_name_parts = blob2.split("?")  
+                    self.add_key_value(input_dic, "BLOBNAMES", blob_name_parts[0], True)
+                    self.add_key_value(input_dic,
+                                       "BLOBNAMES_WITH_SAS",
+                                       blob2,
+                                       True)
+                else:
+                    self.add_key_value(input_dic, "BLOBNAMES", blob2, True)
+                    self.add_key_value(input_dic,
+                                       "BLOBNAMES_WITH_SAS",
+                                       self.datatransfer.create_input_blob_sas_url(blob2, self.args_output.sas_duration),
+                                       True)
         output_dic = dict()
         self.add_key_value(output_dic, "ACCOUNT",
                            self.args_output.output_storage_account_name, False)
-        self.add_key_value(output_dic, "CONTAINER",
-                           self.datatransfer.output_container, False)
+
         self.add_key_value(output_dic, "OVERWRITE",
                            str(self.args_output.output_overwrite).lower(), False)
-        self.add_key_value(output_dic, "CONTAINER_SAS",
-                           self.datatransfer.create_output_sas(self.args_output.sas_duration), False)
+
+        if "?" in self.datatransfer.output_container:
+            # SAS token has been included in container
+            container_name_parts = self.datatransfer.output_container.split("?")  
+            self.add_key_value(output_dic, "CONTAINER",
+                               container_name_parts[0], False)
+            self.add_key_value(output_dic, "CONTAINER_SAS",
+                               container_name_parts[1], False)
+        else:
+            self.add_key_value(output_dic, "CONTAINER",
+                               self.datatransfer.output_container, False)
+            self.add_key_value(output_dic, "CONTAINER_SAS",
+                               self.datatransfer.create_output_sas(self.args_output.sas_duration), False)
         self.add_key_value(output_dic, "OUTPUT_FILENAME_BASE",
                            self.args_output.output_filename_base, False)
         self.add_key_value(output_dic, "OUTPUT_INCLUDE_LOGFILES",
